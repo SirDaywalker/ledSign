@@ -1,3 +1,6 @@
+__author__ = "Jannis Dickel"
+__credits__ = ["Leon Reusch", "Jonas Witte"]
+
 import machine, neopixel
 from time import sleep
 
@@ -5,6 +8,7 @@ from time import sleep
 class Leds:
     # initialization of all colors as statics
     RED = (255, 0, 0)
+    ORANGE = (255,165,0)
     YELLOW = (255, 150, 0)
     GREEN = (0, 255, 0)
     CYAN = (0, 255, 255)
@@ -40,6 +44,12 @@ class Leds:
 
 
     def fade(self, target_color: tuple[int, int, int]) -> None:
+        """
+        uses iteration to fade to the target_color
+        
+        :param target_color: the color you want to fade to
+        :return: None
+        """
         r = self.color[0]
         g = self.color[1]
         b = self.color[2]
@@ -63,7 +73,25 @@ class Leds:
             self.set_all((r, g, b))
             
             
-    def more_fps_mode(self):
+    def blink_up(self):
+        """
+        blinks-up 3 times in red
+        :return: None
+        """
+        for i in range(3):
+                self.set_all(self.RED)
+                sleep(0.5)
+                self.set_all(self.OFF)
+                sleep(0.5)
+                
+            
+            
+    def rainbow(self):
+        """
+        fades all colors
+        
+        :return: None
+        """
         self.fade(self.RED)
         self.fade(self.GREEN)
         self.fade(self.BLUE)
