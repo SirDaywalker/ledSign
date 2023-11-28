@@ -1,1 +1,1 @@
-print("Hello Boot")
+print("Hello from Boot")
