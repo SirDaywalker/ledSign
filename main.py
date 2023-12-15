@@ -1,14 +1,15 @@
 __author__ = "Jannis Dickel"
 
 from lib.leds import Leds
-from lib.us_sensor import Us_sensor
+from lib.usSensor import UsSensor
 from time import sleep
 
 
 def main() -> None:   
-    led = Leds(6, 20)
+    led: Leds = Leds(6, 20)
     led.set_all(led.OFF)
-    us_sensor = Us_sensor(16, 17)
+    us_sensor: UsSensor = UsSensor(16, 17)
+
     while True:
         distance: int = int(us_sensor.read_distance())
         
