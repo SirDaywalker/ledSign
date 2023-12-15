@@ -1,14 +1,15 @@
 __author__ = "Jannis Dickel"
 __credits__ = ["Leon Reusch", "Jonas Witte"]
 
-import machine, neopixel
+import machine
+import neopixel
 from time import sleep
 
 
 class Leds:
     # initialization of all colors as statics
     RED = (255, 0, 0)
-    ORANGE = (255,165,0)
+    ORANGE = (255, 165, 0)
     YELLOW = (255, 150, 0)
     GREEN = (0, 255, 0)
     CYAN = (0, 255, 255)
@@ -20,14 +21,13 @@ class Leds:
         """
         Constructs a Led-Stripe-Object to connect to
 
-        :param num_leds: a int with the count of the LEDs in the Stripe
-        :param pin: a int which represents the Pin on the ESP32
+        :param num_leds: an int with the count of the LEDs in the Stripe
+        :param pin: an int which represents the Pin on the ESP32
         """
 
         self.num_leds = num_leds
         self.np = neopixel.NeoPixel(machine.Pin(pin), num_leds)
         self.color = None
-
 
     def set_all(self, color: tuple[int, int, int]) -> None:
         """
@@ -41,7 +41,6 @@ class Leds:
             self.np[led] = color
             self.np.write()
             self.color = color
-
 
     def fade(self, target_color: tuple[int, int, int]) -> None:
         """
@@ -71,21 +70,18 @@ class Leds:
                 b = b - 1
                 
             self.set_all((r, g, b))
-            
-            
+
     def blink_up(self):
         """
         blinks-up 3 times in red
         :return: None
         """
         for i in range(3):
-                self.set_all(self.RED)
-                sleep(0.5)
-                self.set_all(self.OFF)
-                sleep(0.5)
-                
-            
-            
+            self.set_all(self.RED)
+            sleep(0.5)
+            self.set_all(self.OFF)
+            sleep(0.5)
+
     def rainbow(self):
         """
         fades all colors
