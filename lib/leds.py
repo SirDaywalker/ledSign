@@ -3,10 +3,14 @@ __credits__ = ["Leon Reusch", "Jonas Witte"]
 
 import machine
 import neopixel
+import uasyncio
 from time import sleep
 
 
 class Leds:
+    """
+    An object that represents an LED-strip with individually controllable LEDs.
+    """
     # initialization of all colors as statics
     RED = (255, 0, 0)
     ORANGE = (255, 165, 0)
@@ -19,7 +23,7 @@ class Leds:
 
     def __init__(self, num_leds: int, pin: int) -> None:
         """
-        Constructs a Led-Stripe-Object to connect to
+        Constructs a Led-Stripe-Object.
 
         :param num_leds: an int with the count of the LEDs in the Stripe
         :param pin: an int which represents the Pin on the ESP32
@@ -27,26 +31,81 @@ class Leds:
 
         self.num_leds = num_leds
         self.np = neopixel.NeoPixel(machine.Pin(pin), num_leds)
-        self.color = None
+        self.color = self.OFF
 
-    def set_all(self, color: tuple[int, int, int]) -> None:
+    @staticmethod
+    def convert_hsv_to_rgb(hue, sat, val) -> (int, int, int):
         """
-        setts all LEDs to the given color
+        Takes a hsv value and converts it to a rgb value.
 
-        :param color: a tuple of 3 ints representing the color on the LED-Stripe (use the 'leds.py' attributes!)
+        :param hue: h (hue) of the hsv value
+        :param sat: s (saturation) of the hsv value
+        :param val: v (value) of the hsv value
+        :return:
+        """
+        if hue >= 65536:
+            hue %= 65536
+
+        hue = (hue * 1530 + 32768) // 65536
+        if hue < 510:
+            b = 0
+            if hue < 255:
+                r = 255
+                g = hue
+            else:
+                r = 510 - hue
+                g = 255
+
+        elif hue < 1020:
+            r = 0
+            if hue < 765:
+                g = 255
+                b = hue - 510
+            else:
+                g = 1020 - hue
+                b = 255
+
+        elif hue < 1530:
+            g = 0
+            if hue < 1275:
+                r = hue - 1020
+                b = 255
+            else:
+                r = 255
+                b = 1530 - hue
+
+        else:
+            r = 255
+            g = 0
+            b = 0
+
+        v1 = 1 + val
+        s1 = 1 + sat
+        s2 = 255 - sat
+
+        r = ((((r * s1) >> 8) + s2) * v1) >> 8
+        g = ((((g * s1) >> 8) + s2) * v1) >> 8
+        b = ((((b * s1) >> 8) + s2) * v1) >> 8
+        return r, g, b
+
+    def set_all(self, color: (int, int, int)) -> None:
+        """
+        Sets all LEDs to the given color.
+
+        :param color: the color to set to
         :return: None
         """
 
         for led in range(self.num_leds):
             self.np[led] = color
-            self.np.write()
             self.color = color
+        self.np.write()
 
-    def fade(self, target_color: tuple[int, int, int]) -> None:
+    def fade(self, target_color: (int, int, int)) -> None:
         """
-        uses iteration to fade to the target_color
+        Uses iteration to fade to the target_color.
         
-        :param target_color: the color you want to fade to
+        :param target_color: the color to fade to
         :return: None
         """
         r = self.color[0]
@@ -71,23 +130,39 @@ class Leds:
                 
             self.set_all((r, g, b))
 
-    def blink_up(self):
+    def blink_up(self, target_color: (int, int, int) = RED) -> None:
         """
-        blinks-up 3 times in red
+        Blinks-up 2 times in the given color. Red by default.
         :return: None
         """
-        for i in range(3):
-            self.set_all(self.RED)
+        for i in range(2):
+            self.set_all(target_color)
             sleep(0.5)
             self.set_all(self.OFF)
             sleep(0.5)
 
-    def rainbow(self):
+    async def candy_tornado(self, sat=255, val=255, delay_ms=10, hue_gap=65535, hue_cycle_speed=65535) -> None:
         """
-        fades all colors
-        
+        Runs an infinite tornado throughout all hsv-colors.
+        The longer the stripe the better it will look.
+
+        :param sat: Hue of hsv.
+        :param val: Value of hsv.
+        :param delay_ms: The delay between the single cycles.
+        :param hue_gap: The gap between the colors. The smaller the gap the smoother it gets.
+        :param hue_cycle_speed: The speed the colors cycle.
         :return: None
         """
-        self.fade(self.RED)
-        self.fade(self.GREEN)
-        self.fade(self.BLUE)
+        sync_hue = 0
+        self.color = (0, 0, 0)
+
+        while True:
+            hue = sync_hue
+            for i in range(self.num_leds):
+                self.np[i] = self.convert_hsv_to_rgb(hue, sat, val)
+                hue = (hue + (hue_gap // self.num_leds)) % 65536
+
+            sync_hue = (sync_hue + (hue_cycle_speed // self.num_leds)) % 65536
+
+            self.np.write()
+            await uasyncio.sleep(delay_ms / 100)
