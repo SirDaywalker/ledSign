@@ -9,7 +9,43 @@ import uasyncio as asyncio
 led: Leds = Leds(6, 20)
 us_sensor: UsSensor = UsSensor(16, 17)
 app: Microdot = Microdot()
-current_task = None
+current_task: asyncio.Task = None
+
+
+async def run_colors():
+    while True:
+        distance: int = int(us_sensor.read_distance())
+
+        if distance < 3:
+            await kill_current_task("")
+            led.blink_up()
+            led.fade(led.OFF)
+
+        elif 3 < distance < 6:
+            await kill_current_task("")
+            led.fade(led.RED)
+
+        elif 6 < distance < 9:
+            await kill_current_task("")
+            led.fade(led.YELLOW)
+
+        elif 9 < distance < 12:
+            await kill_current_task("")
+            led.fade(led.GREEN)
+
+        elif 12 < distance < 15:
+            await kill_current_task("")
+            led.fade(led.CYAN)
+
+        elif 15 < distance < 18:
+            await kill_current_task("")
+            led.fade(led.BLUE)
+
+        elif 18 < distance < 21:
+            await kill_current_task("")
+            led.fade(led.PURPLE)
+
+        await asyncio.sleep(0.2)
 
 
 def start_server():
@@ -21,7 +57,7 @@ def start_server():
 
 
 @app.before_request
-async def kill_all_tasks(request):
+async def kill_current_task(request):
     if current_task:
         current_task.cancel()
 
@@ -34,53 +70,69 @@ def hello(request) -> (str, int):
 @app.route("/set-rgb-color")
 def fade_color(request) -> (str, int):
     # http://<ip addr>/change-color?r=[int]&g=[int]&b=[int]
-    led.set_all((
-        int(request.args['r']),
-        int(request.args['g']),
-        int(request.args['b'])
-    ))
+    try:
+        led.set_all((
+            int(request.args['r']),
+            int(request.args['g']),
+            int(request.args['b'])
+        ))
+    except ValueError:
+        return "Non fitting params", 400    
+        
     return "Changed color", 200
 
 
 @app.route("/set-hsv-color")
 def fade_color(request) -> (str, int):
     # http://<ip addr>/change-color?h=[int]&s=[int]&v=[int]
-    led.set_all((
-        led.convert_hsv_to_rgb(
-            int(request.args['h']),
-            int(request.args['s']),
-            int(request.args['v'])
-        )
-    ))
+    try:
+        led.set_all((
+            led.convert_hsv_to_rgb(
+                int(request.args['h']),
+                int(request.args['s']),
+                int(request.args['v'])
+            )
+        ))
+    except ValueError:
+        return "Non fitting params", 400
+        
     return "Changed color", 200
 
 
 @app.route("/fade-rgb-color")
 def fade_color(request) -> (str, int):
     # http://<ip addr>/change-color?r=[int]&g=[int]&b=[int]
-    led.fade((
-        int(request.args['r']),
-        int(request.args['g']),
-        int(request.args['b'])
-    ))
+    try:
+        led.fade((
+            int(request.args['r']),
+            int(request.args['g']),
+            int(request.args['b'])
+        ))
+    except ValueError:
+        return "Non fitting params", 400
+    
     return "Changed color", 200
 
 
 @app.route("/fade-hsv-color")
 def fade_color(request) -> (str, int):
     # http://<ip addr>/change-color?h=[int]&s=[int]&v=[int]
-    led.fade((
-        led.convert_hsv_to_rgb(
-            int(request.args['h']),
-            int(request.args['s']),
-            int(request.args['v'])
-        )
-    ))
+    try:
+        led.fade((
+            led.convert_hsv_to_rgb(
+                int(request.args['h']),
+                int(request.args['s']),
+                int(request.args['v'])
+            )
+        ))
+    except ValueError:
+        return "Non fitting params", 400
+    
     return "Changed color", 200
 
 
 @app.route("/candy-tornado")
-def candy_tornado(request) -> (str, int):
+async def candy_tornado(request) -> (str, int):
     # http://<ip addr>/candy-tornado?
     # sat=[int]&val=[int]&delay_ms=[int]&hue_gap=[int]&hue_cycle_speed=[int]
     # <all path variables optional>
@@ -92,10 +144,11 @@ def candy_tornado(request) -> (str, int):
     global current_task
     try:
         current_task = asyncio.create_task(led.candy_tornado(**args_dict))
-    except TypeError:
+    except TypeError or ValueError:
         return "Non fitting params", 400
 
     return "Going wild", 200
 
 
+asyncio.create_task(run_colors())
 start_server()
