@@ -3,7 +3,7 @@ __credits__ = ["Leon Reusch", "Jonas Witte"]
 
 import machine
 import neopixel
-import uasyncio
+import uasyncio as asyncio
 from time import sleep
 
 
@@ -165,4 +165,4 @@ class Leds:
             sync_hue = (sync_hue + (hue_cycle_speed // self.num_leds)) % 65536
 
             self.np.write()
-            await uasyncio.sleep(delay_ms / 100)
+            await asyncio.sleep(delay_ms / 100)
