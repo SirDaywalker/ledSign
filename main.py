@@ -58,12 +58,15 @@ async def kill_current_task(request):
         current_task.cancel()
 
 
-@app.route('/')
-def hello(request) -> (str, int):
-    return "Raspberry Pi Pico W Http Web Server", 200
+@app.get('/')
+def homepage(request) -> (str, int, str):
+    with open("lib/templates/index.html") as index:
+        index_html: str = index.read()
+
+    return index_html, 200, {'Content-Type': 'text/html'}
 
 
-@app.route("/set-rgb-color")
+@app.get("/set-rgb-color")
 def fade_color(request) -> (str, int):
     # http://<ip addr>/change-color?r=[int]&g=[int]&b=[int]
     try:
@@ -73,12 +76,12 @@ def fade_color(request) -> (str, int):
             int(request.args['b'])
         ))
     except ValueError:
-        return "Non fitting params", 400    
+        return "Non fitting params", 400
         
     return "Changed color", 200
 
 
-@app.route("/set-hsv-color")
+@app.get("/set-hsv-color")
 def fade_color(request) -> (str, int):
     # http://<ip addr>/change-color?h=[int]&s=[int]&v=[int]
     try:
@@ -95,7 +98,7 @@ def fade_color(request) -> (str, int):
     return "Changed color", 200
 
 
-@app.route("/fade-rgb-color")
+@app.get("/fade-rgb-color")
 def fade_color(request) -> (str, int):
     # http://<ip addr>/change-color?r=[int]&g=[int]&b=[int]
     try:
@@ -110,7 +113,7 @@ def fade_color(request) -> (str, int):
     return "Changed color", 200
 
 
-@app.route("/fade-hsv-color")
+@app.get("/fade-hsv-color")
 def fade_color(request) -> (str, int):
     # http://<ip addr>/change-color?h=[int]&s=[int]&v=[int]
     try:
@@ -127,7 +130,7 @@ def fade_color(request) -> (str, int):
     return "Changed color", 200
 
 
-@app.route("/candy-tornado")
+@app.get("/candy-tornado")
 async def candy_tornado(request) -> (str, int):
     # http://<ip addr>/candy-tornado?
     # sat=[int]&val=[int]&delay_ms=[int]&hue_gap=[int]&hue_cycle_speed=[int]
