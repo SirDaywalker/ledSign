@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LED Lampe - Pico W Webserver</title>
+</head>
+<body>
+    <label for="colorpicker">Color Picker:</label>
+    <input type="color" id="colorpicker" value="#000000">
+
+
+    <button onclick="candyTornado()">CANDY TORNADO!</button>
+
+<!--    <label for="sat">Saturation:</label>-->
+<!--    <input type="number" id="sat">-->
+
+<!--    <label for="val">Value:</label>-->
+<!--    <input type="number" id="val">-->
+
+<!--    <label for="delay">Delay:</label>-->
+<!--    <input type="number" id="delay">-->
+
+<!--    <label for="cycleSpeed">Cycle Speed:</label>-->
+<!--    <input type="number" id="cycleSpeed">-->
+
+</body>
+<script>
+    function hexToRgb(hex) {
+        let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result = {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        };
+    }
+
+    document.getElementById('colorpicker').addEventListener('input', () => {
+        const colorHex = document.getElementById('colorpicker').value;
+        fetch(
+            '/set-rgb-color?' +
+                'r=' + hexToRgb(colorHex).r +
+                '&g=' +hexToRgb(colorHex).g +
+                '&b=' + hexToRgb(colorHex).b, {
+            method: 'GET',
+        }).then((response) => {
+            if (!response.ok) {
+                console.error(response.text());
+            }
+        })
+    })
+
+    function candyTornado() {
+        fetch('/candy-tornado', {
+            method: 'GET',
+        }).then((response) => {
+            if (!response.ok) {
+                console.error(response.text());
+            }
+        })
+    }
+</script>
+</html>
