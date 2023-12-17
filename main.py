@@ -16,33 +16,29 @@ async def run_colors():
     while True:
         distance: int = int(us_sensor.read_distance())
 
-        if distance < 3:
+        if distance <= 21:
             await kill_current_task("")
+
+        if distance < 3:
             led.blink_up()
             led.fade(led.OFF)
 
         elif 3 < distance < 6:
-            await kill_current_task("")
             led.fade(led.RED)
 
         elif 6 < distance < 9:
-            await kill_current_task("")
             led.fade(led.YELLOW)
 
         elif 9 < distance < 12:
-            await kill_current_task("")
             led.fade(led.GREEN)
 
         elif 12 < distance < 15:
-            await kill_current_task("")
             led.fade(led.CYAN)
 
         elif 15 < distance < 18:
-            await kill_current_task("")
             led.fade(led.BLUE)
 
         elif 18 < distance < 21:
-            await kill_current_task("")
             led.fade(led.PURPLE)
 
         await asyncio.sleep(0.2)
