@@ -25,8 +25,8 @@ class Leds:
         """
         Constructs a Led-Stripe-Object.
 
-        :param num_leds: an int with the count of the LEDs in the Stripe
-        :param pin: an int which represents the Pin on the ESP32
+        :param num_leds: an int with the count of the LEDs in the Stripe.
+        :param pin: an int which represents the Pin on the Board.
         """
 
         self.num_leds = num_leds
@@ -92,7 +92,7 @@ class Leds:
         """
         Sets all LEDs to the given color.
 
-        :param color: the color to set to
+        :param color: the color to set to.
         :return: None
         """
 
@@ -105,7 +105,7 @@ class Leds:
         """
         Uses iteration to fade to the target_color.
         
-        :param target_color: the color to fade to
+        :param target_color: the color to fade to.
         :return: None
         """
         r = self.color[0]
@@ -129,6 +129,7 @@ class Leds:
                 b = b - 1
                 
             self.set_all((r, g, b))
+            sleep(0.005)
 
     def blink_up(self, target_color: (int, int, int) = RED) -> None:
         """
@@ -136,10 +137,31 @@ class Leds:
         :return: None
         """
         for i in range(2):
-            self.set_all(target_color)
+            self.fade(target_color)
             sleep(0.5)
-            self.set_all(self.OFF)
+            self.fade(self.OFF)
             sleep(0.5)
+
+    async def breath(self, target_color: (int, int, int), delay: int = 10) -> None:
+        """
+        Blinks up the color continuously.
+
+        :param target_color: The color to blink up.
+        :param delay: the speed it blinks up. 10ms by default.
+        :return: None
+        """
+
+        rgb = (0, 0, 0)
+        while True:
+            while rgb != target_color:
+                rgb = tuple([rgb[i] + 1 if rgb[i] < target_color[i] else rgb[i] for i in range(3)])
+                self.set_all(rgb)
+                await asyncio.sleep_ms(delay)
+
+            while rgb != (0, 0, 0):
+                rgb = tuple([rgb[i] - 1 if rgb[i] > 0 else rgb[i] for i in range(3)])
+                self.set_all(rgb)
+                await asyncio.sleep_ms(delay)
 
     async def candy_tornado(self, sat=255, val=255, delay_ms=10, hue_gap=65535, hue_cycle_speed=65535) -> None:
         """
