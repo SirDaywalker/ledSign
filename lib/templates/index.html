@@ -5,13 +5,29 @@
     <title>LED Lampe - Pico W Webserver</title>
 </head>
 <body>
-<div style="display: flex">
-    <div>
-        <label for="colorpicker">Color Picker:</label>
-        <input type="color" id="colorpicker" value="#000000">
-        <button onclick="changeColor()">Change Color</button>
-    </div>
+<h1>LED Sign</h1>
 
+<div id="colorpicker-container">
+    <input type="color" id="colorpicker">
+    <button onclick="changeColor()">Change Color</button>
+</div>
+
+<div id="button-container">
+     <div>
+        <button onclick="breath()">Breath</button>
+
+        <!--    <label for="sat">Saturation:</label>-->
+        <!--    <input type="number" id="sat">-->
+
+        <!--    <label for="val">Value:</label>-->
+        <!--    <input type="number" id="val">-->
+
+        <!--    <label for="delay">Delay:</label>-->
+        <!--    <input type="number" id="delay">-->
+
+        <!--    <label for="cycleSpeed">Cycle Speed:</label>-->
+        <!--    <input type="number" id="cycleSpeed">-->
+    </div>
     <div>
         <button onclick="candyTornado()">CANDY TORNADO!</button>
 
@@ -29,6 +45,53 @@
     </div>
 </div>
 </body>
+<style>
+    body {
+        background-color: #121212;
+        font-family: 'Arial', sans-serif;
+        font-size: 1rem;
+        color: white;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    button {
+        cursor: pointer;
+        color: white;
+        background-color: transparent;
+        margin: 5px;
+        width: 120px;
+    }
+
+    #colorpicker-container, #button-container {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+
+    #colorpicker {
+        border-radius: 50%;
+        height: 150px;
+        width: 150px;
+        border: none;
+        outline: none;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        -webkit-appearance: none;
+    }
+
+    #colorpicker::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    #colorpicker::-webkit-color-swatch {
+        border: none;
+        border-radius: 50%;
+    }
+</style>
 <script>
     function hexToRgb(hex) {
         let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -40,13 +103,13 @@
     }
 
     function changeColor() {
-        const colorHex = document.getElementById('colorpicker').value;
+        const rgbValue = document.getElementById('colorpicker').value;
         fetch(
             '/set-rgb-color?' +
-            'r=' + hexToRgb(colorHex).r +
-            '&g=' + hexToRgb(colorHex).g +
-            '&b=' + hexToRgb(colorHex).b, {
-                method: 'GET',
+            'r=' + hexToRgb(rgbValue).r +
+            '&g=' + hexToRgb(rgbValue).g +
+            '&b=' + hexToRgb(rgbValue).b, {
+                method: 'GET'
             }).then((response) => {
             if (!response.ok) {
                 console.error(response.text());
@@ -54,9 +117,20 @@
         })
     }
 
+    function breath() {
+        const colorHex = document.getElementById('colorpicker').value;
+        fetch('/breath?' + 'r=' + hexToRgb(colorHex).r + '&g=' + hexToRgb(colorHex).g + '&b=' + hexToRgb(colorHex).b, {
+            method: 'GET'
+        }).then((response) => {
+            if (!response.ok) {
+                console.error(response.text())
+            }
+        })
+    }
+
     function candyTornado() {
         fetch('/candy-tornado', {
-            method: 'GET',
+            method: 'GET'
         }).then((response) => {
             if (!response.ok) {
                 console.error(response.text());
