@@ -11,6 +11,10 @@ us_sensor: UsSensor = UsSensor(16, 17)
 app: Microdot = Microdot()
 current_task: asyncio.Task = None
 
+global wifi
+if wifi.status() == 3:
+    led.blink_up(led.GREEN)
+
 
 async def run_colors():
     while True:
@@ -77,7 +81,7 @@ def fade_color(request) -> (str, int):
         ))
     except ValueError:
         return "Non fitting params", 400
-        
+
     return "Changed color", 200
 
 
@@ -94,7 +98,7 @@ def fade_color(request) -> (str, int):
         ))
     except ValueError:
         return "Non fitting params", 400
-        
+
     return "Changed color", 200
 
 
@@ -109,7 +113,7 @@ def fade_color(request) -> (str, int):
         ))
     except ValueError:
         return "Non fitting params", 400
-    
+
     return "Changed color", 200
 
 
@@ -126,8 +130,20 @@ def fade_color(request) -> (str, int):
         ))
     except ValueError:
         return "Non fitting params", 400
-    
+
     return "Changed color", 200
+
+
+@app.get("/breath")
+async def breath(request) -> (str, str):
+    # http://<ip addr>/breath?target_color=(int, int, int)&delay=[int]<delay optional>
+    global current_task
+    try:
+        current_task = asyncio.create_task(led.breath(request.args['target_color']))
+    except TypeError or ValueError:
+        return "Non fitting params", 400
+
+    return "Breathing now", 200
 
 
 @app.get("/candy-tornado")
