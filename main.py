@@ -136,10 +136,14 @@ def fade_color(request) -> (str, int):
 
 @app.get("/breath")
 async def breath(request) -> (str, str):
-    # http://<ip addr>/breath?target_color=(int, int, int)&delay=[int]<delay optional>
+    # http://<ip addr>/breath?r=[int]&g=[int]&b=[int]&delay=[int]<delay optional>
     global current_task
     try:
-        current_task = asyncio.create_task(led.breath(request.args['target_color']))
+        current_task = asyncio.create_task(led.breath((
+            int(request.args['r']),
+            int(request.args['g']),
+            int(request.args['b'])
+        )))
     except TypeError or ValueError:
         return "Non fitting params", 400
 
