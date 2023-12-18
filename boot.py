@@ -11,24 +11,19 @@ WIFI_SETTINGS: dict = {
 
 
 def connect_to_wifi() -> WLAN:
+    global wifi
     wifi: WLAN = WLAN(STA_IF)
     wifi.active(True)
     wifi.disconnect()
-    
+
+    print("Trying to connect to wifi...", end="")
     wifi.connect(WIFI_SETTINGS["SSID"], WIFI_SETTINGS["Password"])
-    
-    max_wait = 10
-    while max_wait > 0:
-        if wifi.status() < 0 or wifi.status() >= 3:
-            break
-        max_wait -= 1
-        print("Waiting for connection...")
+
+    while not wifi.status() == 3:
+        print('.', end="")
         sleep(1)
 
-    if wifi.status() != 3:
-        raise RuntimeError(f"\033[91mFailed to connect to WIFI. Timed out after 10 seconds\033[0m")
-
-    print(f"\033[92mConnected successfully to Wifi! As: {wifi.ifconfig()[0]}\033[0m")
+    print('\n', f"\033[92mConnected successfully to Wifi! As: {wifi.ifconfig()[0]}\033[0m")
     return wifi
 
 
