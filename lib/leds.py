@@ -34,7 +34,7 @@ class Leds:
         self.color = self.OFF
 
     @staticmethod
-    def convert_hsv_to_rgb(hue, sat, val) -> (int, int, int):
+    def convert_hsv_to_rgb(hue, sat, val) -> tuple[int, int, int]:
         """
         Takes a hsv value and converts it to a rgb value.
 
@@ -88,7 +88,7 @@ class Leds:
         b = ((((b * s1) >> 8) + s2) * v1) >> 8
         return r, g, b
 
-    def set_all(self, color: (int, int, int)) -> None:
+    def set_all(self, color: tuple[int, int, int]) -> None:
         """
         Sets all LEDs to the given color.
 
@@ -101,37 +101,36 @@ class Leds:
             self.color = color
         self.np.write()
 
-    def fade(self, target_color: (int, int, int)) -> None:
+    def fade(self, target_color: tuple[int, int, int]) -> None:
         """
         Uses iteration to fade to the target_color.
-        
+
         :param target_color: the color to fade to.
         :return: None
         """
         r = self.color[0]
         g = self.color[1]
         b = self.color[2]
-          
+
         while self.color != target_color:
             if r < target_color[0]:
                 r = r + 1
             if r > target_color[0]:
                 r = r - 1
-                 
+
             if g < target_color[1]:
                 g = g + 1
             if g > target_color[1]:
                 g = g - 1
-                  
+
             if b < target_color[2]:
                 b = b + 1
             if b > target_color[2]:
                 b = b - 1
-                
-            self.set_all((r, g, b))
-            sleep(0.005)
 
-    def blink_up(self, target_color: (int, int, int) = RED) -> None:
+            self.set_all((r, g, b))
+
+    def blink_up(self, target_color: tuple[int, int, int] = RED) -> None:
         """
         Blinks-up 2 times in the given color. Red by default.
         :return: None
@@ -142,7 +141,7 @@ class Leds:
             self.fade(self.OFF)
             sleep(0.5)
 
-    async def breath(self, target_color: (int, int, int), delay: int = 10) -> None:
+    async def breath(self, target_color: tuple[int, int, int], delay: int = 10) -> None:
         """
         Blinks up the color continuously.
 
