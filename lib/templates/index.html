@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>LED Lampe - Pico W Webserver</title>
+    <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 </head>
 <body>
 <h1>LED Sign</h1>
 
 <div id="colorpicker-container">
-    <input type="color" id="colorpicker">
-    <button onclick="changeColor()">Change Color</button>
+    <div id="picker"></div>
 </div>
 
 <div id="button-container">
-     <div>
-        <button onclick="breath()">Breath</button>
+    <div>
+        <button id="change-color" onclick="changeColor()">Change Color</button>
+    </div>
+    <div>
+        <button id="breath" onclick="breath()">Breath</button>
 
         <!--    <label for="sat">Saturation:</label>-->
         <!--    <input type="number" id="sat">-->
@@ -29,7 +32,7 @@
         <!--    <input type="number" id="cycleSpeed">-->
     </div>
     <div>
-        <button onclick="candyTornado()">CANDY TORNADO!</button>
+        <button id="tornado" onclick="candyTornado()">CANDY TORNADO!</button>
 
         <!--    <label for="sat">Saturation:</label>-->
         <!--    <input type="number" id="sat">-->
@@ -46,23 +49,22 @@
 </div>
 </body>
 <style>
+    :root {
+        --bg: #0e0915;
+        --color: #e8d9fc;
+        --semiTransparent: #c9b8e0;
+        --fontSize: 1rem;
+    }
+
     body {
-        background-color: #121212;
-        font-family: 'Arial', sans-serif;
-        font-size: 1rem;
-        color: white;
+        background-color: var(--bg);
+        font-family: Space Grotesk,Gill Sans,Gill Sans MT,Calibri,Trebuchet MS,sans-serif;;
+        font-size: var(--fontSize);
+        color: var(--color);
     }
 
     h1 {
         text-align: center;
-    }
-
-    button {
-        cursor: pointer;
-        color: white;
-        background-color: transparent;
-        margin: 5px;
-        width: 120px;
     }
 
     #colorpicker-container, #button-container {
@@ -72,43 +74,47 @@
         align-items: center;
     }
 
-    #colorpicker {
-        border-radius: 50%;
-        height: 150px;
-        width: 150px;
-        border: none;
-        outline: none;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        -webkit-appearance: none;
+    /* buttons */
+    #change-color, #breath, #tornado {
+        cursor: pointer;
+        color: var(--color);
+        background-color: transparent;
+        border-radius: 25px;
+        margin: 10px;
+        height: 70px;
+        width: 300px;
+        border: 2px solid white;
+        transition: all 0.5s;
     }
 
-    #colorpicker::-webkit-color-swatch-wrapper {
-        padding: 0;
+    #change-color {
+        margin-top: 30px;
     }
 
-    #colorpicker::-webkit-color-swatch {
-        border: none;
-        border-radius: 50%;
+    #change-color:hover , #breath:hover , #tornado:hover {
+        background-color: var(--semiTransparent);
+        color: black;
+    }
+
+    #change-color:active, #breath:active, #tornado:active {
+        background-color: white;
+        color: black;
+        transition: none;
     }
 </style>
 <script>
-    function hexToRgb(hex) {
-        let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16)
-        }
-    }
+    const colorPicker = new iro.ColorPicker('#picker', {
+        width: 400,
+        height: 400,
+        borderWidth: 2,
+        borderColor: 'var(--color)',
+        color: "#FF0000"
+    });
 
     function changeColor() {
-        const rgbValue = document.getElementById('colorpicker').value;
+        const rgb = colorPicker.color.rgb;
         fetch(
-            '/set-rgb-color?' +
-            'r=' + hexToRgb(rgbValue).r +
-            '&g=' + hexToRgb(rgbValue).g +
-            '&b=' + hexToRgb(rgbValue).b, {
+            '/set-rgb-color?' + 'r=' + rgb.r + '&g=' + rgb.g + '&b=' + rgb.b, {
                 method: 'GET'
             }).then((response) => {
             if (!response.ok) {
@@ -118,8 +124,8 @@
     }
 
     function breath() {
-        const colorHex = document.getElementById('colorpicker').value;
-        fetch('/breath?' + 'r=' + hexToRgb(colorHex).r + '&g=' + hexToRgb(colorHex).g + '&b=' + hexToRgb(colorHex).b, {
+        const rgb = colorPicker.color.rgb;
+        fetch('/breath?' + 'r=' + rgb.r + '&g=' + rgb.g + '&b=' + rgb.b, {
             method: 'GET'
         }).then((response) => {
             if (!response.ok) {
