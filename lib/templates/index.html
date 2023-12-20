@@ -8,43 +8,53 @@
 <body>
 <h1>LED Sign</h1>
 
-<div id="colorpicker-container">
-    <div id="picker"></div>
+<div id="outer-container">
+    <div id="inner-container">
+        <div class="settings-container">
+            <p>Breath-Settings:</p>
+            <label for="speed">Speed:</label>
+            <input class="slider" type="range" id="speed"  min="1" max="30" value="10">
+            <span id="speed-display"></span>
+        </div>
+
+        <div id="picker"></div>
+
+        <div class="settings-container">
+            <p>Tornado-Settings:</p>
+            <label for="sat">Saturation:</label>
+            <input class="slider" type="range" id="sat" min="0" max="255" value="255">
+            <span id="sat-display"></span>
+
+            <label for="val">Value:</label>
+            <input class="slider" type="range" id="val" min="0" max="255" value="255">
+            <span id="val-display"></span>
+
+            <label for="delay">Delay:</label>
+            <input class="slider" type="range" id="delay" min="10" max="50" value="10">
+            <span id="delay-display"></span>
+
+            <label for="gap">Gap:</label>
+            <input class="slider" type="range" id="gap" min="12000" max="80000" value="65535">
+            <span id="gap-display"></span>
+
+            <label for="cycleSpeed">Cycle Speed:</label>
+            <input class="slider" type="range" id="cycleSpeed" min="-80000" max="80000" value="65535">
+            <span id="cycleSpeed-display"></span>
+        </div>
+    </div>
 </div>
 
 <div id="button-container">
     <div>
-        <button id="change-color" onclick="changeColor()">Change Color</button>
+        <button class="buttons" id="change-color" onclick="changeColor()">Change Color</button>
     </div>
-    <div>
-        <button id="breath" onclick="breath()">Breath</button>
 
-        <!--    <label for="sat">Saturation:</label>-->
-        <!--    <input type="number" id="sat">-->
+    <div id="breath-container">
+        <button class="buttons" id="breath" onclick="breath()">Breath</button>
 
-        <!--    <label for="val">Value:</label>-->
-        <!--    <input type="number" id="val">-->
-
-        <!--    <label for="delay">Delay:</label>-->
-        <!--    <input type="number" id="delay">-->
-
-        <!--    <label for="cycleSpeed">Cycle Speed:</label>-->
-        <!--    <input type="number" id="cycleSpeed">-->
     </div>
-    <div>
-        <button id="tornado" onclick="candyTornado()">CANDY TORNADO!</button>
-
-        <!--    <label for="sat">Saturation:</label>-->
-        <!--    <input type="number" id="sat">-->
-
-        <!--    <label for="val">Value:</label>-->
-        <!--    <input type="number" id="val">-->
-
-        <!--    <label for="delay">Delay:</label>-->
-        <!--    <input type="number" id="delay">-->
-
-        <!--    <label for="cycleSpeed">Cycle Speed:</label>-->
-        <!--    <input type="number" id="cycleSpeed">-->
+    <div id="tornado-container">
+        <button class="buttons" id="tornado" onclick="candyTornado()">CANDY TORNADO!</button>
     </div>
 </div>
 </body>
@@ -67,15 +77,26 @@
         text-align: center;
     }
 
-    #colorpicker-container, #button-container {
+    #outer-container, #button-container {
         display: flex;
         flex-direction: column;
         text-align: center;
         align-items: center;
     }
 
-    /* buttons */
-    #change-color, #breath, #tornado {
+    #inner-container {
+        display: flex;
+        text-align: center;
+    }
+
+    .settings-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 60px;
+    }
+
+    .buttons {
         cursor: pointer;
         color: var(--color);
         background-color: transparent;
@@ -101,6 +122,26 @@
         color: black;
         transition: none;
     }
+
+    .slider {
+        -webkit-appearance: none;
+        width: 200px;
+        height: 10px;
+        background: var(--semiTransparent);
+        border: 2px solid var(--color);
+        border-radius: 10px;
+        outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #8948E1FF;
+        cursor: pointer;
+    }
 </style>
 <script>
     const colorPicker = new iro.ColorPicker('#picker', {
@@ -113,8 +154,11 @@
 
     function changeColor() {
         const rgb = colorPicker.color.rgb;
-        fetch(
-            '/set-rgb-color?' + 'r=' + rgb.r + '&g=' + rgb.g + '&b=' + rgb.b, {
+        fetch('/set-rgb-color?' +
+            'r=' + rgb.r +
+            '&g=' + rgb.g +
+            '&b=' + rgb.b, {
+
                 method: 'GET'
             }).then((response) => {
             if (!response.ok) {
@@ -125,7 +169,12 @@
 
     function breath() {
         const rgb = colorPicker.color.rgb;
-        fetch('/breath?' + 'r=' + rgb.r + '&g=' + rgb.g + '&b=' + rgb.b, {
+        fetch('/breath?' +
+            'r=' + rgb.r +
+            '&g=' + rgb.g +
+            '&b=' + rgb.b +
+            '&delay=' + document.getElementById('speed').value, {
+
             method: 'GET'
         }).then((response) => {
             if (!response.ok) {
@@ -135,7 +184,13 @@
     }
 
     function candyTornado() {
-        fetch('/candy-tornado', {
+        fetch('/candy-tornado?' +
+            'sat=' + document.getElementById('sat').value +
+            '&val=' + document.getElementById('val').value +
+            '&delay_ms=' + document.getElementById('delay').value +
+            '&hue_gap=' + document.getElementById('gap').value +
+            '&hue_cycle_speed=' + document.getElementById('cycleSpeed').value, {
+
             method: 'GET'
         }).then((response) => {
             if (!response.ok) {
