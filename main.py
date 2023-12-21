@@ -16,7 +16,12 @@ if wifi.status() == 3:
     led.blink_up(led.GREEN)
 
 
-async def run_colors():
+async def run_colors() -> None:
+    """
+    Measures the distance the sensor provides and changes the colors according to the distance.
+
+    :return: None
+    """
     while True:
         distance: int = int(us_sensor.read_distance())
 
@@ -48,7 +53,12 @@ async def run_colors():
         await asyncio.sleep(0.2)
 
 
-def start_server():
+def start_server() -> None:
+    """
+    Starts the Server.
+
+    :return: None
+    """
     print("Starting webserver...")
     try:
         app.run(port=80)
@@ -57,13 +67,26 @@ def start_server():
 
 
 @app.before_request
-async def kill_current_task(request):
+async def kill_current_task(request) -> None:
+    """
+    Cancels the current task before any mapping.
+
+    :param request: the clients request (Not interesting)
+    :return: None
+    """
     if current_task:
         current_task.cancel()
 
 
 @app.get('/')
 def homepage(request) -> (str, int, str):
+    """
+    Reads in the index.html and sends it to the user.
+
+    :param request: the clients request (homepage call)
+    :return: a tuple containing the page, the htmlstauts code and a json how to use the html.
+    """
+
     with open("lib/templates/index.html") as index:
         index_html: str = index.read()
 
@@ -71,8 +94,14 @@ def homepage(request) -> (str, int, str):
 
 
 @app.get("/set-rgb-color")
-def fade_color(request) -> (str, int):
-    # http://<ip addr>/change-color?r=[int]&g=[int]&b=[int]
+def set_color(request) -> (str, int):
+    """
+    Maps the rgb-color set.
+    Mapping Pattern:  http://<ip addr>/change-color?r=[int]&g=[int]&b=[int]
+
+    :param request: the clients request (See above: Mapping Pattern)
+    :return: a tuple containing the htmlstauts text and code
+    """
     try:
         led.set_all((
             int(request.args['r']),
@@ -87,7 +116,13 @@ def fade_color(request) -> (str, int):
 
 @app.get("/set-hsv-color")
 def fade_color(request) -> (str, int):
-    # http://<ip addr>/change-color?h=[int]&s=[int]&v=[int]
+    """
+    Maps the hsv-color set.
+    Mapping Pattern: http://<ip addr>/change-color?h=[int]&s=[int]&v=[int]
+
+    :param request: the clients request (See above: Mapping Pattern)
+    :return: a tuple containing the htmlstauts text and code
+    """
     try:
         led.set_all((
             led.convert_hsv_to_rgb(
@@ -104,7 +139,13 @@ def fade_color(request) -> (str, int):
 
 @app.get("/fade-rgb-color")
 def fade_color(request) -> (str, int):
-    # http://<ip addr>/change-color?r=[int]&g=[int]&b=[int]
+    """
+    Maps the fading to a rgb-color.
+    Mapping Pattern: http://<ip addr>/fade-color?r=[int]&g=[int]&b=[int]
+
+    :param request: the clients request (See above: Mapping Pattern)
+    :return: a tuple containing the htmlstauts text and code
+    """
     try:
         led.fade((
             int(request.args['r']),
@@ -119,7 +160,13 @@ def fade_color(request) -> (str, int):
 
 @app.get("/fade-hsv-color")
 def fade_color(request) -> (str, int):
-    # http://<ip addr>/change-color?h=[int]&s=[int]&v=[int]
+    """
+    Maps the fading to a hsv-color.
+    Mapping Pattern: http://<ip addr>/fade-color?h=[int]&s=[int]&v=[int]
+
+    :param request: the clients request (See above: Mapping Pattern)
+    :return: a tuple containing the htmlstauts text and code
+    """
     try:
         led.fade((
             led.convert_hsv_to_rgb(
@@ -136,7 +183,13 @@ def fade_color(request) -> (str, int):
 
 @app.get("/breath")
 async def breath(request) -> (str, str):
-    # http://<ip addr>/breath?r=[int]&g=[int]&b=[int]&delay=[int]<delay optional>
+    """
+    Maps the "breath"-command.
+    Mapping Pattern: http://<ip addr>/breath?r=[int]&g=[int]&b=[int]&delay=[int]<delay optional>
+
+    :param request: the clients request (See above: Mapping Pattern)
+    :return: a tuple containing the htmlstauts text and code
+    """
     global current_task
     try:
         current_task = asyncio.create_task(led.breath((
@@ -152,10 +205,16 @@ async def breath(request) -> (str, str):
 
 @app.get("/candy-tornado")
 async def candy_tornado(request) -> (str, int):
-    # http://<ip addr>/candy-tornado?
-    # sat=[int]&val=[int]&delay_ms=[int]&hue_gap=[int]&hue_cycle_speed=[int]
-    # <all path variables optional>
+    """
+    Maps the "CandyTornado"-command.
+    Mapping Pattern:
+        http://<ip addr>/candy-tornado?
+        sat=[int]&val=[int]&delay_ms=[int]&hue_gap=[int]&hue_cycle_speed=[int]
+        <all path variables optional>
 
+    :param request: the clients request (See above: Mapping Pattern)
+    :return: a tuple containing the htmlstauts text and code
+    """
     args_dict = {}
     for key in request.args.keys():
         args_dict[key] = int(request.args[key])
