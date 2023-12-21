@@ -9,9 +9,8 @@ from time import sleep
 
 class Leds:
     """
-    An object that represents an LED-strip with individually controllable LEDs.
+    Represents an LED-strip with a length of x individual individually controllable LEDs.
     """
-    # initialization of all colors as statics
     RED = (255, 0, 0)
     ORANGE = (255, 165, 0)
     YELLOW = (255, 150, 0)
@@ -27,8 +26,8 @@ class Leds:
 
         :param num_leds: an int with the count of the LEDs in the Stripe.
         :param pin: an int which represents the Pin on the Board.
+        :return: None.
         """
-
         self.num_leds = num_leds
         self.np = neopixel.NeoPixel(machine.Pin(pin), num_leds)
         self.color = self.OFF
@@ -41,7 +40,7 @@ class Leds:
         :param hue: h (hue) of the hsv value
         :param sat: s (saturation) of the hsv value
         :param val: v (value) of the hsv value
-        :return:
+        :return: a tuple (r, g, b)
         """
         if hue >= 65536:
             hue %= 65536
@@ -95,7 +94,6 @@ class Leds:
         :param color: the color to set to.
         :return: None
         """
-
         for led in range(self.num_leds):
             self.np[led] = color
             self.color = color
@@ -133,6 +131,7 @@ class Leds:
     def blink_up(self, target_color: tuple[int, int, int] = RED) -> None:
         """
         Blinks-up 2 times in the given color. Red by default.
+        :param target_color: the to set to.
         :return: None
         """
         for i in range(2):
@@ -164,7 +163,7 @@ class Leds:
 
     async def candy_tornado(self, sat=255, val=255, delay_ms=10, hue_gap=65535, hue_cycle_speed=65535) -> None:
         """
-        Runs an infinite tornado throughout all hsv-colors.
+        Runs an infinite tornado of candies throughout all hsv-colors.
         The longer the stripe the better it will look.
 
         :param sat: Hue of hsv.
