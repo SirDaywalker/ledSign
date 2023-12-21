@@ -10,14 +10,21 @@ WIFI_SETTINGS: dict = {
 }
 
 
-def connect_to_wifi() -> WLAN:
+def connect_to_wifi(ssid: str, psw: str) -> WLAN:
+    """
+    Connects to the Wi-Fi network.
+
+    :param ssid: the Wi-Fi name.
+    :param psw: the password of the network.
+    :return: the new Wi-Fi-Object.
+    """
     global wifi
     wifi: WLAN = WLAN(STA_IF)
     wifi.active(True)
     wifi.disconnect()
 
     print("Trying to connect to wifi...", end="")
-    wifi.connect(WIFI_SETTINGS["SSID"], WIFI_SETTINGS["Password"])
+    wifi.connect(ssid, psw)
 
     while not wifi.status() == 3:
         print('.', end="")
@@ -29,4 +36,4 @@ def connect_to_wifi() -> WLAN:
 
 if __name__ == '__main__':
     print("Booting up...")
-    connect_to_wifi()
+    connect_to_wifi(WIFI_SETTINGS["SSID"], WIFI_SETTINGS["Password"])
