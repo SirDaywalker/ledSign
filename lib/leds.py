@@ -161,7 +161,7 @@ class Leds:
                 self.set_all(rgb)
                 await asyncio.sleep_ms(delay)
 
-    async def candy_tornado(self, sat=255, val=255, delay_ms=10, hue_gap=65535, hue_cycle_speed=65535) -> None:
+    async def candy_tornado(self, sat=255, val=255, delay_ms=10, hue_gap=36358, hue_cycle_speed=4885) -> None:
         """
         Runs an infinite tornado of candies throughout all hsv-colors.
         The longer the stripe the better it will look.
