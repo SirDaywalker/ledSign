@@ -5,8 +5,8 @@ from network import WLAN, STA_IF
 from time import sleep
 
 WIFI_SETTINGS: dict = {
-    "SSID": "Impfchip-6a29e5",
-    "Password": "Schnitzel",
+    "SSID": "",
+    "Password": "",
 }
 
 
