@@ -16,8 +16,8 @@ WIFI_SETTINGS: dict = {
 ```
 Make also sure to change the Pins of the LED and US-Sensor like this:
 ```python
-led: Leds = Leds(*num leds on stripe*, *Pin on the board*)
-us_sensor: UsSensor = UsSensor(*trigger_Pin on thr board*, *echo_Pin on thr board*)
+led: Leds = Leds(#num leds on stripe, #Pin on the board)
+us_sensor: UsSensor = UsSensor(#trigger_Pin on thr board, #echo_Pin on thr board)
 ```
 
 For optimal use of the webserver feature, make sure to give the Pico a static IP address.
