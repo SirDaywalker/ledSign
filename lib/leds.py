@@ -128,6 +128,37 @@ class Leds:
 
             self.set_all((r, g, b))
 
+    async def fade_async(self, target_color: tuple[int, int, int], delay: int = 10) -> None:
+        """
+        Uses iteration to fade to the target_color.
+
+        :param target_color: the color to fade to.
+        :param delay: the delay between the fades
+        :return: None
+        """
+        r = self.color[0]
+        g = self.color[1]
+        b = self.color[2]
+
+        while self.color != target_color:
+            if r < target_color[0]:
+                r = r + 1
+            if r > target_color[0]:
+                r = r - 1
+
+            if g < target_color[1]:
+                g = g + 1
+            if g > target_color[1]:
+                g = g - 1
+
+            if b < target_color[2]:
+                b = b + 1
+            if b > target_color[2]:
+                b = b - 1
+
+            self.set_all((r, g, b))
+            await asyncio.sleep_ms(int(delay/2))
+
     def blink_up(self, target_color: tuple[int, int, int] = RED) -> None:
         """
         Blinks-up 2 times in the given color. Red by default.
@@ -160,6 +191,14 @@ class Leds:
                 rgb = tuple([rgb[i] - 1 if rgb[i] > 0 else rgb[i] for i in range(3)])
                 self.set_all(rgb)
                 await asyncio.sleep_ms(delay)
+
+    async def cycle(self, target1: tuple[int, int, int], target2: tuple[int, int, int], delay: int = 10) -> None:
+        if target1 == target2:
+            raise ValueError
+
+        while True:
+            await self.fade_async(target1, delay)
+            await self.fade_async(target2, delay)
 
     async def candy_tornado(self, sat=255, val=255, delay_ms=10, hue_gap=36358, hue_cycle_speed=4885) -> None:
         """
