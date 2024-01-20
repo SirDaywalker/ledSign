@@ -2,7 +2,7 @@ __author__ = "Jannis Dickel"
 
 from lib.leds import Leds
 from lib.usSensor import UsSensor
-from lib.microdot_asyncio import Microdot
+from lib.microdot_asyncio import Microdot, send_file, Response, Request
 
 import uasyncio as asyncio
 
@@ -19,7 +19,6 @@ if wifi.status() == 3:
 async def run_colors() -> None:
     """
     Measures the distance the sensor provides and changes the colors according to the distance.
-
     :return: None
     """
     while True:
@@ -56,174 +55,141 @@ async def run_colors() -> None:
 def start_server() -> None:
     """
     Starts the Server.
-
     :return: None
     """
-    print("Starting webserver...")
     try:
+        print("Server successfully started")
         app.run(port=80)
     except:
         app.shutdown()
+        print("Server shut down")
 
 
 @app.before_request
-async def kill_current_task(request) -> None:
+async def kill_current_task(request: Request) -> None:
     """
     Cancels the current task before any mapping.
-
-    :param request: the clients request (Not interesting)
+    :param request: the clients request
     :return: None
     """
     if current_task:
         current_task.cancel()
 
 
-@app.get('/')
-def homepage(request) -> (str, int, str):
+@app.get("/")
+def homepage(request: Request) -> Response:
     """
-    Reads in the index.html and sends it to the user.
-
+    Maps the homepage request and sends it to the user.
     :param request: the clients request (homepage call)
-    :return: a tuple containing the page, the htmlstauts code and a json how to use the html.
+    :return: the index.html
     """
-
-    with open("lib/templates/index.html") as index:
-        index_html: str = index.read()
-
-    return index_html, 200, {'Content-Type': 'text/html'}
+    return send_file("/lib/static/index.html", content_type="text/html")
 
 
-@app.get("/set-rgb-color")
-def set_color(request) -> (str, int):
+@app.get("/css/<path:path>")
+def static(request: Request, path: str) -> Response:
     """
-    Maps the rgb-color set.
-    Mapping Pattern:  http://<ip addr>/change-color?r=[int]&g=[int]&b=[int]
-
-    :param request: the clients request (See above: Mapping Pattern)
-    :return: a tuple containing the htmlstauts text and code
+    Maps the css request and sends it to the user.
+    :param request: the clients request
+    :return: the css file
     """
-    try:
-        led.set_all((
-            int(request.args['r']),
-            int(request.args['g']),
-            int(request.args['b'])
-        ))
-    except ValueError:
-        return "Non fitting params", 400
-
-    return "Changed color", 200
+    return send_file("/lib/static/" + path)
 
 
-@app.get("/set-hsv-color")
-def fade_color(request) -> (str, int):
+@app.get("/js/<path:path>")
+def static(request: Request, path: str) -> Response:
     """
-    Maps the hsv-color set.
-    Mapping Pattern: http://<ip addr>/change-color?h=[int]&s=[int]&v=[int]
+    Maps the js request and sends it to the user.
+    :param request: the clients request
+    :return: the css file
+    """
+    return send_file("/lib/static/" + path)
 
-    :param request: the clients request (See above: Mapping Pattern)
-    :return: a tuple containing the htmlstauts text and code
+
+@app.put("/set-rgb-color")
+def set_color(request: Request) -> (str, int):
+    """
+    Maps the rgb-color set and changes the color.
+    :param request: the clients request
+    :return: a tuple containing the html-status text and code
     """
     try:
         led.set_all((
-            led.convert_hsv_to_rgb(
-                int(request.args['h']),
-                int(request.args['s']),
-                int(request.args['v'])
-            )
+            int(request.json['r']),
+            int(request.json['g']),
+            int(request.json['b'])
         ))
     except ValueError:
-        return "Non fitting params", 400
+        return "Non-fitting params", 400
 
     return "Changed color", 200
 
 
-@app.get("/fade-rgb-color")
-def fade_color(request) -> (str, int):
-    """
-    Maps the fading to a rgb-color.
-    Mapping Pattern: http://<ip addr>/fade-color?r=[int]&g=[int]&b=[int]
-
-    :param request: the clients request (See above: Mapping Pattern)
-    :return: a tuple containing the htmlstauts text and code
-    """
-    try:
-        led.fade((
-            int(request.args['r']),
-            int(request.args['g']),
-            int(request.args['b'])
-        ))
-    except ValueError:
-        return "Non fitting params", 400
-
-    return "Changed color", 200
-
-
-@app.get("/fade-hsv-color")
-def fade_color(request) -> (str, int):
-    """
-    Maps the fading to a hsv-color.
-    Mapping Pattern: http://<ip addr>/fade-color?h=[int]&s=[int]&v=[int]
-
-    :param request: the clients request (See above: Mapping Pattern)
-    :return: a tuple containing the htmlstauts text and code
-    """
-    try:
-        led.fade((
-            led.convert_hsv_to_rgb(
-                int(request.args['h']),
-                int(request.args['s']),
-                int(request.args['v'])
-            )
-        ))
-    except ValueError:
-        return "Non fitting params", 400
-
-    return "Changed color", 200
-
-
-@app.get("/breath")
+@app.put("/breath")
 async def breath(request) -> (str, str):
     """
-    Maps the "breath"-command.
-    Mapping Pattern: http://<ip addr>/breath?r=[int]&g=[int]&b=[int]&delay=[int]<delay optional>
-
-    :param request: the clients request (See above: Mapping Pattern)
-    :return: a tuple containing the htmlstauts text and code
+    Maps the "breath"-command and changes the led-stripe behaviour.
+    :param request: the clients request
+    :return: a tuple containing the html-status text and code
     """
     global current_task
     try:
         current_task = asyncio.create_task(led.breath((
-            int(request.args['r']),
-            int(request.args['g']),
-            int(request.args['b'])
-        )))
+            int(request.json['r']),
+            int(request.json['g']),
+            int(request.json['b'])),
+            delay=int(request.json['delay'])
+        ))
     except TypeError or ValueError:
-        return "Non fitting params", 400
+        return "Non-fitting params", 400
 
     return "Breathing now", 200
 
 
-@app.get("/candy-tornado")
-async def candy_tornado(request) -> (str, int):
+@app.put("/cycle")
+async def cycle(request) -> (str, int):
     """
-    Maps the "CandyTornado"-command.
-    Mapping Pattern:
-        http://<ip addr>/candy-tornado?
-        sat=[int]&val=[int]&delay_ms=[int]&hue_gap=[int]&hue_cycle_speed=[int]
-        <all path variables optional>
-
-    :param request: the clients request (See above: Mapping Pattern)
-    :return: a tuple containing the htmlstauts text and code
+    Maps the "cycle"-command and changes the led-stripe behaviour.
+    :param request: the clients request
+    :return: a tuple containing the html-status text and code
     """
-    args_dict = {}
-    for key in request.args.keys():
-        args_dict[key] = int(request.args[key])
-
     global current_task
     try:
-        current_task = asyncio.create_task(led.candy_tornado(**args_dict))
+        current_task = asyncio.create_task(led.cycle((
+            int(request.json['c1r']),
+            int(request.json['c1g']),
+            int(request.json['c1b'])
+        ), (
+            int(request.json['c2r']),
+            int(request.json['c2g']),
+            int(request.json['c2b'])
+        ),
+            delay=int(request.json['delay'])
+        ))
     except TypeError or ValueError:
-        return "Non fitting params", 400
+        return "Non-fitting params", 400
+
+    return "Cycling now", 200
+
+
+@app.put("/candy-tornado")
+async def candy_tornado(request) -> (str, int):
+    """
+    Maps the "CandyTornado"-command and changes the led-stripe behaviour.
+    :param request: the clients request
+    :return: a tuple containing the html-status text and code
+    """
+    global current_task
+    try:
+        current_task = asyncio.create_task(led.candy_tornado(
+            sat=int(request.json['sat']),
+            val=int(request.json['val']),
+            delay_ms=int(request.json['delay_ms']),
+            hue_gap=int(request.json['hue_gap']),
+            hue_cycle_speed=int(request.json['hue_cycle_speed'])
+        ))
+    except TypeError or ValueError:
+        return "Non-fitting params", 400
 
     return "Going wild", 200
 
