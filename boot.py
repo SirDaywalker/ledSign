@@ -37,3 +37,4 @@ def connect_to_wifi(ssid: str, psw: str) -> WLAN:
 if __name__ == '__main__':
     print("Booting up...")
     connect_to_wifi(WIFI_SETTINGS["SSID"], WIFI_SETTINGS["Password"])
+    print("Starting webserver...")
