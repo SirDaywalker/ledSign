@@ -46,11 +46,11 @@ body {
     transition: all 0.5s;
 }
 
-#settings-button svg {
+#settings-button svg, #off > svg{
     fill: #ffffff;
 }
 
-#settings-button:hover svg {
+#settings-button:hover svg,  #off:hover svg{
     fill: var(--bg);
 }
 
