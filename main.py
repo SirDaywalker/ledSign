@@ -35,13 +35,13 @@ async def run_colors() -> None:
             led.fade(led.RED)
 
         elif 6 < distance < 9:
-            led.fade(led.YELLOW)
+            led.fade(led.ORANGE)
 
         elif 9 < distance < 12:
-            led.fade(led.GREEN)
+            led.fade(led.YELLOW)
 
         elif 12 < distance < 15:
-            led.fade(led.CYAN)
+            led.fade(led.GREEN)
 
         elif 15 < distance < 18:
             led.fade(led.BLUE)
