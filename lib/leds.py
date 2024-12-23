@@ -12,7 +12,7 @@ class Leds:
     Represents an LED-strip with a length of x individual individually controllable LEDs.
     """
     RED = (255, 0, 0)
-    ORANGE = (255, 165, 0)
+    ORANGE = (255, 30, 0)
     YELLOW = (255, 150, 0)
     GREEN = (0, 255, 0)
     CYAN = (0, 255, 255)
