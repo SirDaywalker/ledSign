@@ -8,36 +8,72 @@ body {
     font-family: var(--font);
     font-size: 1rem;
     color: #ffffff;
-    display: flex;
-    justify-content: center;
+    margin: 0;
+}
+
+#feedback-popup {
+    position: fixed;
+    left: -50%;
+    top: 3%;
+    transform: translateX(0);
+    background: #ffffff;
+    color: var(--bg);
+    padding: 0.8em 1.2em;
+    border-radius: 0.8em;
+    font-weight: bold;
+    opacity: 0;
+    box-shadow: 0 0 12px rgba(255,255,255,0.6);
+    transition:
+        left 0.4s ease-out,
+        opacity 0.4s ease-out;
+}
+
+#feedback-popup.show {
+    left: 2%;
+    opacity: 1;
+}
+
+#feedback-popup.fade-out {
+    left: 2%;
+    opacity: 0;
 }
 
 .container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 0 auto;
+    padding: 1em;
     max-width: 50em;
+    text-align: center; 
 }
+
+#picker {
+    margin: 0 auto;
+    display: block;
+    width: fit-content;
+}
+
 
 .options {
-    width: 100%;
-    margin: 2em;
-    display: flex;
-    justify-content: space-evenly;
+    display: grid;
     gap: 1em;
-    flex-wrap: wrap;
+    width: 100%;
+    margin: 2em auto;
+    justify-content: center; 
+    grid-template-columns: repeat(auto-fit, 6em); 
 }
 
+
 .buttons {
-    cursor: pointer;
-    height: 6em;
+    width: 6em;
     aspect-ratio: 1;
     border: 2px solid #ffffff;
     border-radius: 1em;
-    background-color: transparent;
+    background: transparent;
     color: #ffffff;
-    transition: all 0.5s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 200ms;
 }
 
 .buttons:hover {
@@ -45,6 +81,32 @@ body {
     color: var(--bg);
     transition: all 0.5s;
 }
+
+.buttons.pressed {
+    animation: pressEffect 400ms ease-out;
+}
+
+@keyframes pressEffect {
+    0% {
+        transform: scale(1);
+        box-shadow: none;
+        background-color: transparent;
+        color: #ffffff;
+    }
+    50% {
+        transform: scale(0.92);
+        box-shadow: 0 0 12px #ffffff;
+        background-color: #ffffff;
+        color: var(--bg);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: none;
+        background-color: transparent;
+        color: #ffffff;
+    }
+}
+
 
 #settings-button svg, #off > svg{
     fill: #ffffff;
@@ -55,18 +117,56 @@ body {
 }
 
 #settings-container {
+    text-align: center;
     background-color: var(--bg);
     border: 2px solid #ffffff;
-    padding: 0;
-    width: min-content;
+    padding: 1em;
+    width: 100%;
+    max-width: 22em;
+    margin: 0 auto;
+    border-radius: 1em;
+    max-height: 90vh; 
+    overflow-y: auto; 
+    box-sizing: border-box;
+}
+
+#settings-container:popover-open {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .settings {
-    margin: 1em;
+    margin-bottom: 1em;
+    text-align: center;
 }
 
-.settings > * {
+.settings span {
+    font-weight: bold;
+    display: block;
     color: #ffffff;
+}
+
+.settings label { 
+    display: block;
+    margin-bottom: 0.3em;
+    color: #ffffff;
+}
+
+#settings-cycle-color-picker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1em 0;
+}
+
+.color {
+    margin: 0 auto 0 auto;
+    width: 3em;
+    height: 3em;
+    border: none;
+    padding: 0;
 }
 
 .slider {
@@ -76,14 +176,4 @@ body {
     border: 2px solid #ffffff;
     border-radius: 10px;
     outline: none;
-}
-
-.slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 15px;
-    height: 15px;
-    background-color: #ba80ea;
-    border-radius: 50%;
-    cursor: pointer;
 }
