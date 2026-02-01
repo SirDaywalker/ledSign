@@ -210,6 +210,22 @@ async def candy_tornado(request) -> (str, int):
 
     return "Going wild", 200
 
+@app.put("/lottery")
+async def lottery(request) -> (str, int):
+    try:
+        data = request.json
+        start_led_task(
+            led.lottery(
+                (int(data.get('mr')), int(data.get('mg')), int(data.get('mb'))),
+                (int(data.get('br')), int(data.get('bg')), int(data.get('bb'))),
+                int(data.get('delay'))
+            )
+        )
+    except (TypeError, ValueError):
+        return "Non-fitting params", 400
+
+    return "Doing da thing", 200
+
 
 asyncio.create_task(run_colors())
 start_server()

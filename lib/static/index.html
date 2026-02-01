@@ -19,6 +19,7 @@
         </button>
         <button class="buttons" id="breath" onclick="breath()">Breath</button>
         <button class="buttons" id="cycle" onclick="cycle()">Cycle to</button>
+        <button class="buttons" id="lottery" onclick="lottery()">Lottery</button>
         <button class="buttons" id="tornado" onclick="candyTornado()">Candy Tornado</button>
         <button class="buttons" id="settings-button" popovertarget="settings-container">
             <svg viewBox="0 -64 640 640">
@@ -37,12 +38,24 @@
             <label for="cycle-delay">Delay:</label>
             <input class="slider" type="range" id="cycle-delay" min="1" max="20" value="1">
 
-            <div id="settings-cycle-color-picker">
+            <div class="settings-color-picker">
                 <input class="color" type="color" id="first-color" value="#ff0000"><br>
                 <svg  width="25" height="25" fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 340.034 340.034" xml:space="preserve">
                     <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <polygon points="222.814,52.783 200.902,74.686 280.748,154.528 0,154.528 0,185.513 280.748,185.513 200.902,265.353 222.814,287.252 340.034,170.023 "></polygon> </g> </g> </g>
                 </svg>
                 <input class="color" type="color" id="second-color" value="#0000ff"><br>
+            </div>
+        </div>
+        <div class="settings">
+            <span>Lottery Settings</span><br>
+            <label for="lottery-delay">Delay:</label>
+            <input class="slider" type="range" id="lottery-delay" min="100" max="1000" value="1">
+            <div class="settings-color-picker">
+                <input class="color" type="color" id="main" value="#ff0000"><br>
+                <svg  width="25" height="25" fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 340.034 340.034" xml:space="preserve">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <polygon points="222.814,52.783 200.902,74.686 280.748,154.528 0,154.528 0,185.513 280.748,185.513 200.902,265.353 222.814,287.252 340.034,170.023 "></polygon> </g> </g> </g>
+                </svg>
+                <input class="color" type="color" id="balls" value="#0000ff"><br>
             </div>
         </div>
         <div class="settings">

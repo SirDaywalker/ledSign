@@ -156,7 +156,7 @@ body {
     color: #ffffff;
 }
 
-#settings-cycle-color-picker {
+.settings-color-picker {
     display: flex;
     align-items: center;
     justify-content: center;

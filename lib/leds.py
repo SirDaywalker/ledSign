@@ -280,3 +280,12 @@ class Leds:
             self.np.write()
             self.color = self.np[0]
             await asyncio.sleep(delay_ms / 100)
+
+    async def lottery(self, main: tuple[int, int, int], balls: tuple[int, int, int], delay_ms=100) -> None:
+         while True: 
+            for i in range(self.num_leds):
+                self.set_all(main)
+                self.np[i] = balls 
+                self.np[self.num_leds - 1 - i] = balls
+                self.np.write()
+                await asyncio.sleep_ms(delay_ms)
