@@ -86,6 +86,36 @@ class Leds:
         g = ((((g * s1) >> 8) + s2) * v1) >> 8
         b = ((((b * s1) >> 8) + s2) * v1) >> 8
         return r, g, b
+    
+
+    @staticmethod
+    def rgb_to_hsv(r, g, b):
+        """
+        Takes a rgb value and converts it to the hsv value.
+        """
+        r_, g_, b_ = r / 255, g / 255, b / 255
+        mx = max(r_, g_, b_)
+        mn = min(r_, g_, b_)
+        diff = mx - mn
+
+        if diff == 0:
+            h = 0
+        elif mx == r_:
+            h = (60 * ((g_ - b_) / diff)) % 360
+        elif mx == g_:
+            h = (60 * ((b_ - r_) / diff)) + 120
+        else:
+            h = (60 * ((r_ - g_) / diff)) + 240
+
+        h = int(h / 360 * 65535)
+
+        s = 0 if mx == 0 else diff / mx
+        s = int(s * 255)
+
+        v = int(mx * 255)
+
+        return h, s, v
+
 
     def set_all(self, color: tuple[int, int, int]) -> None:
         """
@@ -159,6 +189,20 @@ class Leds:
             self.set_all((r, g, b))
             await asyncio.sleep_ms(int(delay/2))
 
+    async def fade_hsv(self, h1, h2, s, v, delay):
+        hue = h1
+
+        diff = (h2 - h1) % 65536
+        step = 1 if diff < 32768 else -1
+
+        while hue != h2:
+            hue = (hue + step) % 65536
+            rgb = self.convert_hsv_to_rgb(hue, s, v)
+            self.set_all(rgb)
+            await asyncio.sleep_ms(delay)
+
+
+
     def blink_up(self, target_color: tuple[int, int, int] = RED) -> None:
         """
         Blinks-up 2 times in the given color. Red by default.
@@ -181,6 +225,7 @@ class Leds:
         """
 
         rgb = (0, 0, 0)
+        self.color = rgb
         while True:
             while rgb != target_color:
                 rgb = tuple([rgb[i] + 1 if rgb[i] < target_color[i] else rgb[i] for i in range(3)])
@@ -194,11 +239,20 @@ class Leds:
 
     async def cycle(self, target1: tuple[int, int, int], target2: tuple[int, int, int], delay: int = 10) -> None:
         if target1 == target2:
-            raise ValueError
+            raise ValueError("Colors must differ")
+        
+        delay = int(delay / 100)
+
+        h1, s1, v1 = self.rgb_to_hsv(*target1)
+        h2, s2, v2 = self.rgb_to_hsv(*target2)
+
+        s = max(s1, s2)
+        v = max(v1, v2)
 
         while True:
-            await self.fade_async(target1, delay)
-            await self.fade_async(target2, delay)
+            await self.fade_hsv(h1, h2, s, v, delay)
+            await self.fade_hsv(h2, h1, s, v, delay)
+
 
     async def candy_tornado(self, sat=255, val=255, delay_ms=10, hue_gap=36358, hue_cycle_speed=4885) -> None:
         """
@@ -224,4 +278,5 @@ class Leds:
             sync_hue = (sync_hue + (hue_cycle_speed // self.num_leds)) % 65536
 
             self.np.write()
+            self.color = self.np[0]
             await asyncio.sleep(delay_ms / 100)

@@ -132,9 +132,11 @@ body {
 
 #settings-container:popover-open {
     position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    margin: auto;
+    max-height: 90vh;
+    max-width: 22em;
+    transform: none;
 }
 
 .settings {

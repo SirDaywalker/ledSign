@@ -9,23 +9,38 @@ import uasyncio as asyncio
 led: Leds = Leds(6, 20)
 us_sensor: UsSensor = UsSensor(16, 17)
 app: Microdot = Microdot()
-current_task: asyncio.Task = None
+current_task: asyncio.Task = None 
 
-global wifi
-if wifi.status() == 3:
-    led.blink_up(led.GREEN)
+
+try:
+    if wifi.status() == 3:
+        led.blink_up(led.GREEN)
+except Exception:
+    pass 
+
+
+def start_led_task(coro):
+    """
+    Beendet den aktuellen LED-Task sauber und startet einen neuen.
+    Verhindert 'Task was destroyed but it is pending'.
+    """
+    global current_task
+
+    if current_task and not current_task.done():
+        current_task.cancel()
+
+    current_task = asyncio.create_task(coro)
 
 
 async def run_colors() -> None:
     """
     Measures the distance the sensor provides and changes the colors according to the distance.
-    :return: None
     """
     while True:
         distance: int = int(us_sensor.read_distance())
 
         if distance <= 21:
-            await kill_current_task("")
+            await kill_current_task(None)
 
         if distance < 3:
             led.blink_up()
@@ -55,25 +70,28 @@ async def run_colors() -> None:
 def start_server() -> None:
     """
     Starts the Server.
-    :return: None
     """
     try:
         print("Server successfully started")
         app.run(port=80)
-    except:
+    except Exception as e:
+        print("Server shut down due to error:", e)
         app.shutdown()
-        print("Server shut down")
 
 
 @app.before_request
 async def kill_current_task(request: Request) -> None:
     """
-    Cancels the current task before any mapping.
-    :param request: the clients request
-    :return: None
+    Cancels the current LED task before any new command.
     """
-    if current_task:
+    global current_task
+
+    if current_task and not current_task.done():
         current_task.cancel()
+        try:
+            await current_task 
+        except asyncio.CancelledError:
+            pass
 
 
 @app.get("/")
@@ -114,33 +132,34 @@ def set_color(request: Request) -> (str, int):
     :return: a tuple containing the html-status text and code
     """
     try:
+        data = request.json 
         led.set_all((
-            int(request.json['r']),
-            int(request.json['g']),
-            int(request.json['b'])
+            int(data.get('r')),
+            int(data.get('g')),
+            int(data.get('b'))
         ))
-    except ValueError:
+    except (TypeError, ValueError):
         return "Non-fitting params", 400
 
     return "Changed color", 200
 
 
 @app.put("/breath")
-async def breath(request) -> (str, str):
+async def breath(request) -> (str, int):
     """
     Maps the "breath"-command and changes the led-stripe behaviour.
     :param request: the clients request
     :return: a tuple containing the html-status text and code
     """
-    global current_task
     try:
-        current_task = asyncio.create_task(led.breath((
-            int(request.json['r']),
-            int(request.json['g']),
-            int(request.json['b'])),
-            delay=int(request.json['delay'])
-        ))
-    except TypeError or ValueError:
+        data = request.json
+        start_led_task(
+            led.breath(
+                (int(data.get('r')), int(data.get('g')), int(data.get('b'))),
+                delay=int(data.get('delay'))
+            )
+        )
+    except (TypeError, ValueError):
         return "Non-fitting params", 400
 
     return "Breathing now", 200
@@ -153,20 +172,16 @@ async def cycle(request) -> (str, int):
     :param request: the clients request
     :return: a tuple containing the html-status text and code
     """
-    global current_task
     try:
-        current_task = asyncio.create_task(led.cycle((
-            int(request.json['c1r']),
-            int(request.json['c1g']),
-            int(request.json['c1b'])
-        ), (
-            int(request.json['c2r']),
-            int(request.json['c2g']),
-            int(request.json['c2b'])
-        ),
-            delay=int(request.json['delay'])
-        ))
-    except TypeError or ValueError:
+        data = request.json
+        start_led_task(
+            led.cycle(
+                (int(data.get('c1r')), int(data.get('c1g')), int(data.get('c1b'))),
+                (int(data.get('c2r')), int(data.get('c2g')), int(data.get('c2b'))),
+                delay=int(data.get('delay'))
+            )
+        )
+    except (TypeError, ValueError):
         return "Non-fitting params", 400
 
     return "Cycling now", 200
@@ -179,16 +194,18 @@ async def candy_tornado(request) -> (str, int):
     :param request: the clients request
     :return: a tuple containing the html-status text and code
     """
-    global current_task
     try:
-        current_task = asyncio.create_task(led.candy_tornado(
-            sat=int(request.json['sat']),
-            val=int(request.json['val']),
-            delay_ms=int(request.json['delay_ms']),
-            hue_gap=int(request.json['hue_gap']),
-            hue_cycle_speed=int(request.json['hue_cycle_speed'])
-        ))
-    except TypeError or ValueError:
+        data = request.json
+        start_led_task(
+            led.candy_tornado(
+                sat=int(data.get('sat')),
+                val=int(data.get('val')),
+                delay_ms=int(data.get('delay_ms')),
+                hue_gap=int(data.get('hue_gap')),
+                hue_cycle_speed=int(data.get('hue_cycle_speed'))
+            )
+        )
+    except (TypeError, ValueError):
         return "Non-fitting params", 400
 
     return "Going wild", 200
