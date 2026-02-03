@@ -7,7 +7,7 @@ The LED Sign project is a Pico W project that uses an ultrasonic sensor to read 
 Download the source code from my [GitHub](https://github.com/SirDaywalker/ledSign) and drag the "boot.py", "main.py", "settings.py" and the entire lib directory to your Pico W.
 
 ## Setup 
-Open “settings.py” and  change the values in the SETTINGS dict to your corresponding values.
+Open “settings.py” and change the values in the SETTINGS dict to your corresponding values.
 ```python
 SETTINGS: dict = {
     # WIFI
