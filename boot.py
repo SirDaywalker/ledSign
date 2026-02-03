@@ -4,10 +4,7 @@ __credits__ = ["Leon Reusch", "Jonas Witte"]
 from network import WLAN, STA_IF
 from time import sleep
 
-WIFI_SETTINGS: dict = {
-    "SSID": "",
-    "Password": "",
-}
+from settings import SETTINGS
 
 
 def connect_to_wifi(ssid: str, psw: str) -> WLAN:
@@ -36,5 +33,5 @@ def connect_to_wifi(ssid: str, psw: str) -> WLAN:
 
 if __name__ == '__main__':
     print("Booting up...")
-    connect_to_wifi(WIFI_SETTINGS["SSID"], WIFI_SETTINGS["Password"])
+    connect_to_wifi(SETTINGS["SSID"], SETTINGS["Password"])
     print("Starting webserver...")

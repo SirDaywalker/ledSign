@@ -6,8 +6,10 @@ from lib.microdot_asyncio import Microdot, send_file, Response, Request
 
 import uasyncio as asyncio
 
-led: Leds = Leds(6, 20)
-us_sensor: UsSensor = UsSensor(16, 17)
+from settings import SETTINGS
+
+led: Leds = Leds(SETTINGS["AnzLEDs"], SETTINGS["LEDPin"])
+us_sensor: UsSensor = UsSensor(SETTINGS["TriggerPin"], SETTINGS["EchoPin"])
 app: Microdot = Microdot()
 current_task: asyncio.Task = None 
 
