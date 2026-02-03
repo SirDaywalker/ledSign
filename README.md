@@ -4,20 +4,24 @@ The LED Sign project is a Pico W project that uses an ultrasonic sensor to read 
 
 ## Installation
 
-Download the source code from my [GitHub](https://github.com/SirDaywalker/ledSign) and drag the "boot.py", "main.py" and the entire lib directory to your Pico W.
+Download the source code from my [GitHub](https://github.com/SirDaywalker/ledSign) and drag the "boot.py", "main.py", "settings.py" and the entire lib directory to your Pico W.
 
 ## Setup 
-Open “boot.py” and change the values in the WIFI_SETTINGS dict to your password and SSID (WIFI-Name).
+Open “settings.py” and  change the values in the SETTINGS dict to your corresponding values.
 ```python
-WIFI_SETTINGS: dict = {
+SETTINGS: dict = {
+    # WIFI
     "SSID": "Your WIFI Name",
-    "Password": "Your password",
+    "Password": "Your WIFI password",
+
+    # LEDs
+    "AnzLEDs": 6,  # Number of LEDs
+    "LEDPin": 28,  # The pin your LEDs are connected to
+
+    # UsSensor
+    "TriggerPin": 16,  # The pin of the trigger of your ultrasound sensor
+    "EchoPin": 17  # The pin of the echo of your ultrasound sensor
 }
-```
-Make also sure to change the Pins of the LED and US-Sensor like this:
-```python
-led: Leds = Leds(#num leds on stripe, #Pin on the board)
-us_sensor: UsSensor = UsSensor(#trigger_Pin on thr board, #echo_Pin on thr board)
 ```
 
 For optimal use of the webserver feature, make sure to give the Pico a static IP address.
@@ -28,10 +32,7 @@ The 3rd party libary "Microdot" by [miguelgrinberg](https://github.com/miguelgri
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
+Contact one of the Collaborators if you have a feature request.
 
 ## Bug-Report
 
@@ -39,4 +40,4 @@ You encountered a bug? [Please let me know!](https://github.com/SirDaywalker)
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](LICENSE)
