@@ -8,7 +8,7 @@ import uasyncio as asyncio
 
 from settings import SETTINGS
 
-led: Leds = Leds(SETTINGS["AnzLEDs"], SETTINGS["LEDPin"])
+led: Leds = Leds(SETTINGS["NumLEDs"], SETTINGS["LEDPin"])
 us_sensor: UsSensor = UsSensor(SETTINGS["TriggerPin"], SETTINGS["EchoPin"])
 app: Microdot = Microdot()
 current_task: asyncio.Task = None 
