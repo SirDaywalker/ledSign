@@ -17,7 +17,8 @@ current_task: asyncio.Task = None
 try:
     if wifi.status() == 3:
         led.blink_up(led.GREEN)
-        led.fade(SETTINGS["StartColor"])
+        if "StartColor" in SETTINGS:
+            led.fade(SETTINGS["StartColor"])
 except Exception:
     pass 
 

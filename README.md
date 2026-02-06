@@ -17,6 +17,8 @@ SETTINGS: dict = {
     # LEDs
     "AnzLEDs": 6,  # Number of LEDs
     "LEDPin": 28,  # The pin your LEDs are connected to
+    # optional
+    "StartColor": Leds.OFF,  # First Color of the Sign to start with, see ./lib/leds.py
 
     # UsSensor
     "TriggerPin": 16,  # The pin of the trigger of your ultrasound sensor
