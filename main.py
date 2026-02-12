@@ -47,7 +47,6 @@ async def run_colors() -> None:
             await kill_current_task(None)
 
         if distance < 3 and not led.color == led.OFF:
-            if led.color == led.OFF: return
             led.blink_up()
             led.fade(led.OFF)
 
