@@ -1,4 +1,4 @@
-# LED SIGN - Pico W Project
+# LED SIGN – Pico W Project
 
 The LED Sign project is a Pico W project that uses an ultrasonic sensor to read the distance of the hand or an object and changes the color of the LED according to the distance. There is also an integrated web server with even more options.
 
