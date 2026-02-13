@@ -15,7 +15,7 @@ current_task: asyncio.Task = None
 
 
 try:
-    if wifi.status() == 3:   # noqa: F821
+    if wifi.status() == 3:   # noqa: F821 (wifi is global in boot.py)
         led.blink_up(led.GREEN)
         if "StartColor" in SETTINGS:
             led.fade(SETTINGS["StartColor"])
