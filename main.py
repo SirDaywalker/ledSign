@@ -3,6 +3,7 @@ __author__ = "Jannis Dickel"
 from lib.leds import Leds
 from lib.usSensor import UsSensor
 from lib.microdot_asyncio import Microdot, send_file, Response, Request
+from boot import global_wifi
 
 import uasyncio as asyncio
 
@@ -13,14 +14,43 @@ us_sensor: UsSensor = UsSensor(SETTINGS["TriggerPin"], SETTINGS["EchoPin"])
 app: Microdot = Microdot()
 current_task: asyncio.Task = None 
 
+async def connect_to_wifi() -> None:
+    """
+    Function which continuously tries to connect to the Wi-Fi.
+    Distance measuring with the us-sensor will still work and change the LEDs.
+
+    :return: None
+    """
+    async def check_connection() -> bool:
+        counter = 0
+        while counter != 5:
+            if global_wifi.status() == 3:
+                return True
+            await asyncio.sleep(1)
+            counter += 1
+        return False
+
+    while True:
+        global_wifi.connect(SETTINGS["SSID"], SETTINGS["Password"])
+
+        if await check_connection():
+            print(f"\033[92mConnected successfully to Wi-Fi! As: {global_wifi.ifconfig()[0]}\033[0m")
+            break
+
+        global_wifi.disconnect()
 
 try:
-    if wifi.status() == 3:
+    if global_wifi and global_wifi.status() == 3:
         led.blink_up(led.GREEN)
-        if "StartColor" in SETTINGS:
-            led.fade(SETTINGS["StartColor"])
-except Exception:
-    pass 
+    else:
+        led.blink_up(0.2)
+        asyncio.create_task(connect_to_wifi())
+        print("\033[91mTrying to connect to Wi-Fi continuously!\033[0m")
+    if "StartColor" in SETTINGS:
+        led.fade(SETTINGS["StartColor"])
+except Exception as e:
+    print(f"\033[91m{e}\033[0m")
+    pass
 
 
 def start_led_task(coro):
@@ -109,7 +139,7 @@ def homepage(request: Request) -> Response:
 
 
 @app.get("/css/<path:path>")
-def static(request: Request, path: str) -> Response:
+def get_css(request: Request, path: str) -> Response:
     """
     Maps the css request and sends it to the user.
     :param request: the clients request
@@ -119,7 +149,7 @@ def static(request: Request, path: str) -> Response:
 
 
 @app.get("/js/<path:path>")
-def static(request: Request, path: str) -> Response:
+def get_js(request: Request, path: str) -> Response:
     """
     Maps the js request and sends it to the user.
     :param request: the clients request
@@ -229,7 +259,3 @@ async def lottery(request) -> (str, int):
         return "Non-fitting params", 400
 
     return "Doing da thing", 200
-
-
-asyncio.create_task(run_colors())
-start_server()
