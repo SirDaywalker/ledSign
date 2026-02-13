@@ -15,7 +15,7 @@ current_task: asyncio.Task = None
 
 
 try:
-    if wifi.status() == 3:
+    if wifi.status() == 3:   # noqa: F821
         led.blink_up(led.GREEN)
         if "StartColor" in SETTINGS:
             led.fade(SETTINGS["StartColor"])
@@ -109,7 +109,7 @@ def homepage(request: Request) -> Response:
 
 
 @app.get("/css/<path:path>")
-def static(request: Request, path: str) -> Response:
+def get_css(request: Request, path: str) -> Response:
     """
     Maps the css request and sends it to the user.
     :param request: the clients request
@@ -119,7 +119,7 @@ def static(request: Request, path: str) -> Response:
 
 
 @app.get("/js/<path:path>")
-def static(request: Request, path: str) -> Response:
+def get_js(request: Request, path: str) -> Response:
     """
     Maps the js request and sends it to the user.
     :param request: the clients request
