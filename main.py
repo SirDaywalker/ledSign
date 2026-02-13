@@ -34,7 +34,7 @@ async def connect_to_wifi() -> None:
         global_wifi.connect(SETTINGS["SSID"], SETTINGS["Password"])
 
         if await check_connection():
-            print("\033[92mConnected successfully to Wi-Fi! As: {global_wifi.ifconfig()[0]}\033[0m")
+            print(f"\033[92mConnected successfully to Wi-Fi! As: {global_wifi.ifconfig()[0]}\033[0m")
             break
 
         global_wifi.disconnect()
@@ -45,7 +45,7 @@ try:
     else:
         led.blink_up(0.2)
         asyncio.create_task(connect_to_wifi())
-        print(f"\033[91mTrying to connect to Wi-Fi continuously!\033[0m")
+        print("\033[91mTrying to connect to Wi-Fi continuously!\033[0m")
     if "StartColor" in SETTINGS:
         led.fade(SETTINGS["StartColor"])
 except Exception:
