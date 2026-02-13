@@ -14,15 +14,16 @@ us_sensor: UsSensor = UsSensor(SETTINGS["TriggerPin"], SETTINGS["EchoPin"])
 app: Microdot = Microdot()
 current_task: asyncio.Task = None 
 
-
+# This is still part of the Wi-Fi connection
 try:
     if wifi.status() == 3:
-        led.blink_up(led.GREEN)
+        led.blink_up(target_color=led.GREEN)
     else:
-        led.blink_up(0.2)
+        led.blink_up(sleep_time=0.2)
     if "StartColor" in SETTINGS:
         led.fade(SETTINGS["StartColor"])
-except Exception:
+except Exception as e:
+    print(f"\033[91m{e}\033[0m")
     pass
 
 
@@ -79,11 +80,10 @@ def start_server() -> None:
     Starts the Server.
     """
     try:
-        print("Server successfully started")
         app.run(port=80)
     except Exception as e:
-        print("Server shut down due to error:", e)
         app.shutdown()
+        print("Server shut down due to error:", e)
 
 
 @app.before_request
@@ -232,3 +232,9 @@ async def lottery(request) -> (str, int):
         return "Non-fitting params", 400
 
     return "Doing da thing", 200
+
+print("Starting Ultrasound-Sensor...", end="")
+asyncio.create_task(run_colors())
+print("Done")
+print("Starting webserver...")
+start_server()

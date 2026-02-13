@@ -31,5 +31,3 @@ def connect_to_wifi(ssid: str, psw: str) -> WLAN:
 
 print("Booting up...")
 wifi = connect_to_wifi(SETTINGS["SSID"], SETTINGS["Password"])
-print("Starting webserver...")
-
