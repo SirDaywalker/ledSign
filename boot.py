@@ -15,8 +15,7 @@ def connect_to_wifi(ssid: str, psw: str) -> WLAN:
     :param psw: the password of the network.
     :return: the new Wi-Fi-Object.
     """
-    global wifi
-    wifi: WLAN = WLAN(STA_IF)
+    wifi = WLAN(STA_IF)
     wifi.active(True)
     wifi.disconnect()
 
@@ -32,6 +31,7 @@ def connect_to_wifi(ssid: str, psw: str) -> WLAN:
 
 
 if __name__ == '__main__':
+    global wifi
     print("Booting up...")
     connect_to_wifi(SETTINGS["SSID"], SETTINGS["Password"])
     print("Starting webserver...")
