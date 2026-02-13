@@ -3,6 +3,7 @@ __author__ = "Jannis Dickel"
 from lib.leds import Leds
 from lib.usSensor import UsSensor
 from lib.microdot_asyncio import Microdot, send_file, Response, Request
+from boot import wifi
 
 import uasyncio as asyncio
 
@@ -13,14 +14,17 @@ us_sensor: UsSensor = UsSensor(SETTINGS["TriggerPin"], SETTINGS["EchoPin"])
 app: Microdot = Microdot()
 current_task: asyncio.Task = None 
 
-
+# This is still part of the Wi-Fi connection
 try:
     if wifi.status() == 3:
-        led.blink_up(led.GREEN)
-        if "StartColor" in SETTINGS:
-            led.fade(SETTINGS["StartColor"])
-except Exception:
-    pass 
+        led.blink_up(target_color=led.GREEN)
+    else:
+        led.blink_up(sleep_time=0.2)
+    if "StartColor" in SETTINGS:
+        led.fade(SETTINGS["StartColor"])
+except Exception as e:
+    print(f"\033[91m{e}\033[0m")
+    pass
 
 
 def start_led_task(coro):
@@ -76,11 +80,10 @@ def start_server() -> None:
     Starts the Server.
     """
     try:
-        print("Server successfully started")
         app.run(port=80)
     except Exception as e:
-        print("Server shut down due to error:", e)
         app.shutdown()
+        print("Server shut down due to error:", e)
 
 
 @app.before_request
@@ -109,7 +112,7 @@ def homepage(request: Request) -> Response:
 
 
 @app.get("/css/<path:path>")
-def static(request: Request, path: str) -> Response:
+def get_css(request: Request, path: str) -> Response:
     """
     Maps the css request and sends it to the user.
     :param request: the clients request
@@ -119,7 +122,7 @@ def static(request: Request, path: str) -> Response:
 
 
 @app.get("/js/<path:path>")
-def static(request: Request, path: str) -> Response:
+def get_js(request: Request, path: str) -> Response:
     """
     Maps the js request and sends it to the user.
     :param request: the clients request
@@ -230,6 +233,8 @@ async def lottery(request) -> (str, int):
 
     return "Doing da thing", 200
 
-
+print("Starting Ultrasound-Sensor...", end="")
 asyncio.create_task(run_colors())
+print("Done")
+print("Starting webserver...")
 start_server()

@@ -1,0 +1,33 @@
+name: MicroPython Syntax & Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - "**/*.py"
+      - ".github/**/*"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Syntax check (py_compile)
+        run: |
+          find . -name "*.py" -print0 | xargs -0 -n1 python -m py_compile
+
+      - name: Ruff lint check
+        run: ruff check .
