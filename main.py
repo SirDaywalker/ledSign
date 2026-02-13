@@ -111,6 +111,16 @@ def homepage(request: Request) -> Response:
     return send_file("/lib/static/index.html", content_type="text/html")
 
 
+@app.get("/favicon.png")
+def get_favicon(request: Request) -> Response:
+    """
+    Maps the favicon request and sends it to the user.
+    :param request: the clients request
+    :return: the favicon.png
+    """
+    return send_file("/lib/static/favicon.png", content_type="image/png")
+
+
 @app.get("/css/<path:path>")
 def get_css(request: Request, path: str) -> Response:
     """
