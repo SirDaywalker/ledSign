@@ -3,80 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LED Sign - Pico W Webserver</title>
-    <link rel="stylesheet" href="/css/default.css">
+    <title>LED Sign – Pico W Webserver</title>
+    <link rel="stylesheet" href="./default.css">
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 </head>
 <body>
-<div id="feedback-popup">LED-Farbe aktualisiert</div>
-<div class="container">
-    <h1>LED Sign</h1>
-    <div id="picker"></div>
-    <div class="options">
-        <button class="buttons" id="change-color" onclick="changeColor()">Change Color</button>
-        <button class="buttons" id="off" onclick="off()">
-            <svg fill="#fff" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 198.715 198.715" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M161.463,48.763c-2.929-2.929-7.677-2.929-10.607,0c-2.929,2.929-2.929,7.677,0,10.606 c13.763,13.763,21.342,32.062,21.342,51.526c0,19.463-7.579,37.761-21.342,51.523c-14.203,14.204-32.857,21.305-51.516,21.303 c-18.659-0.001-37.322-7.104-51.527-21.309c-28.405-28.405-28.402-74.625,0.005-103.032c2.929-2.929,2.929-7.678,0-10.606 c-2.929-2.929-7.677-2.929-10.607,0C2.956,83.029,2.953,138.766,37.206,173.019c17.132,17.132,39.632,25.697,62.135,25.696 c22.497-0.001,44.997-8.564,62.123-25.69c16.595-16.594,25.734-38.659,25.734-62.129C187.199,87.425,178.059,65.359,161.463,48.763 z"></path> <path d="M99.332,97.164c4.143,0,7.5-3.358,7.5-7.5V7.5c0-4.142-3.357-7.5-7.5-7.5s-7.5,3.358-7.5,7.5v82.164 C91.832,93.807,95.189,97.164,99.332,97.164z"></path> </g> </g></svg>
-        </button>
-        <button class="buttons" id="breath" onclick="breath()">Breath</button>
-        <button class="buttons" id="cycle" onclick="cycle()">Cycle to</button>
-        <button class="buttons" id="lottery" onclick="lottery()">Lottery</button>
-        <button class="buttons" id="tornado" onclick="candyTornado()">Candy Tornado</button>
-        <button class="buttons" id="settings-button" popovertarget="settings-container">
-            <svg viewBox="0 -64 640 640">
-                <path d="M512.1 191l-8.2 14.3c-3 5.3-9.4 7.5-15.1 5.4-11.8-4.4-22.6-10.7-32.1-18.6-4.6-3.8-5.8-10.5-2.8-15.7l8.2-14.3c-6.9-8-12.3-17.3-15.9-27.4h-16.5c-6 0-11.2-4.3-12.2-10.3-2-12-2.1-24.6 0-37.1 1-6 6.2-10.4 12.2-10.4h16.5c3.6-10.1 9-19.4 15.9-27.4l-8.2-14.3c-3-5.2-1.9-11.9 2.8-15.7 9.5-7.9 20.4-14.2 32.1-18.6 5.7-2.1 12.1.1 15.1 5.4l8.2 14.3c10.5-1.9 21.2-1.9 31.7 0L552 6.3c3-5.3 9.4-7.5 15.1-5.4 11.8 4.4 22.6 10.7 32.1 18.6 4.6 3.8 5.8 10.5 2.8 15.7l-8.2 14.3c6.9 8 12.3 17.3 15.9 27.4h16.5c6 0 11.2 4.3 12.2 10.3 2 12 2.1 24.6 0 37.1-1 6-6.2 10.4-12.2 10.4h-16.5c-3.6 10.1-9 19.4-15.9 27.4l8.2 14.3c3 5.2 1.9 11.9-2.8 15.7-9.5 7.9-20.4 14.2-32.1 18.6-5.7 2.1-12.1-.1-15.1-5.4l-8.2-14.3c-10.4 1.9-21.2 1.9-31.7 0zm-10.5-58.8c38.5 29.6 82.4-14.3 52.8-52.8-38.5-29.7-82.4 14.3-52.8 52.8zM386.3 286.1l33.7 16.8c10.1 5.8 14.5 18.1 10.5 29.1-8.9 24.2-26.4 46.4-42.6 65.8-7.4 8.9-20.2 11.1-30.3 5.3l-29.1-16.8c-16 13.7-34.6 24.6-54.9 31.7v33.6c0 11.6-8.3 21.6-19.7 23.6-24.6 4.2-50.4 4.4-75.9 0-11.5-2-20-11.9-20-23.6V418c-20.3-7.2-38.9-18-54.9-31.7L74 403c-10 5.8-22.9 3.6-30.3-5.3-16.2-19.4-33.3-41.6-42.2-65.7-4-10.9.4-23.2 10.5-29.1l33.3-16.8c-3.9-20.9-3.9-42.4 0-63.4L12 205.8c-10.1-5.8-14.6-18.1-10.5-29 8.9-24.2 26-46.4 42.2-65.8 7.4-8.9 20.2-11.1 30.3-5.3l29.1 16.8c16-13.7 34.6-24.6 54.9-31.7V57.1c0-11.5 8.2-21.5 19.6-23.5 24.6-4.2 50.5-4.4 76-.1 11.5 2 20 11.9 20 23.6v33.6c20.3 7.2 38.9 18 54.9 31.7l29.1-16.8c10-5.8 22.9-3.6 30.3 5.3 16.2 19.4 33.2 41.6 42.1 65.8 4 10.9.1 23.2-10 29.1l-33.7 16.8c3.9 21 3.9 42.5 0 63.5zm-117.6 21.1c59.2-77-28.7-164.9-105.7-105.7-59.2 77 28.7 164.9 105.7 105.7zm243.4 182.7l-8.2 14.3c-3 5.3-9.4 7.5-15.1 5.4-11.8-4.4-22.6-10.7-32.1-18.6-4.6-3.8-5.8-10.5-2.8-15.7l8.2-14.3c-6.9-8-12.3-17.3-15.9-27.4h-16.5c-6 0-11.2-4.3-12.2-10.3-2-12-2.1-24.6 0-37.1 1-6 6.2-10.4 12.2-10.4h16.5c3.6-10.1 9-19.4 15.9-27.4l-8.2-14.3c-3-5.2-1.9-11.9 2.8-15.7 9.5-7.9 20.4-14.2 32.1-18.6 5.7-2.1 12.1.1 15.1 5.4l8.2 14.3c10.5-1.9 21.2-1.9 31.7 0l8.2-14.3c3-5.3 9.4-7.5 15.1-5.4 11.8 4.4 22.6 10.7 32.1 18.6 4.6 3.8 5.8 10.5 2.8 15.7l-8.2 14.3c6.9 8 12.3 17.3 15.9 27.4h16.5c6 0 11.2 4.3 12.2 10.3 2 12 2.1 24.6 0 37.1-1 6-6.2 10.4-12.2 10.4h-16.5c-3.6 10.1-9 19.4-15.9 27.4l8.2 14.3c3 5.2 1.9 11.9-2.8 15.7-9.5 7.9-20.4 14.2-32.1 18.6-5.7 2.1-12.1-.1-15.1-5.4l-8.2-14.3c-10.4 1.9-21.2 1.9-31.7 0zM501.6 431c38.5 29.6 82.4-14.3 52.8-52.8-38.5-29.6-82.4 14.3-52.8 52.8z"></path>
-            </svg>
-        </button>
-    </div>
-    <div id="settings-container" popover>
-        <div class="settings">
-            <span>Breath Settings</span><br>
-            <label for="breath-speed">Speed:</label>
-            <input class="slider" type="range" id="breath-speed" min="1" max="30" value="10">
-        </div>
-        <div class="settings">
-            <span>Cycle Settings</span><br>
-            <label for="cycle-delay">Delay:</label>
-            <input class="slider" type="range" id="cycle-delay" min="1" max="20" value="1">
-
-            <div class="settings-color-picker">
-                <input class="color" type="color" id="first-color" value="#ff0000"><br>
-                <svg  width="25" height="25" fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 340.034 340.034" xml:space="preserve">
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <polygon points="222.814,52.783 200.902,74.686 280.748,154.528 0,154.528 0,185.513 280.748,185.513 200.902,265.353 222.814,287.252 340.034,170.023 "></polygon> </g> </g> </g>
+    <div id="feedback-popup">LED-Color changed</div>
+    <div id="root-container">
+        <h1>LED Sign</h1>
+        <div id="color-picker"></div>
+        <div class="options">
+            <button class="buttons" id="change-color" onclick="changeColor()">Change Color</button>
+            <button class="buttons" id="turn-off" onclick="off()">
+                <svg viewBox="0 0 198.715 198.715">
+                    <g>
+                        <path
+                            d="M161.463,48.763c-2.929-2.929-7.677-2.929-10.607,0c-2.929,2.929-2.929,7.677,0,10.606 c13.763,13.763,21.342,32.062,21.342,51.526c0,19.463-7.579,37.761-21.342,51.523c-14.203,14.204-32.857,21.305-51.516,21.303 c-18.659-0.001-37.322-7.104-51.527-21.309c-28.405-28.405-28.402-74.625,0.005-103.032c2.929-2.929,2.929-7.678,0-10.606 c-2.929-2.929-7.677-2.929-10.607,0C2.956,83.029,2.953,138.766,37.206,173.019c17.132,17.132,39.632,25.697,62.135,25.696 c22.497-0.001,44.997-8.564,62.123-25.69c16.595-16.594,25.734-38.659,25.734-62.129C187.199,87.425,178.059,65.359,161.463,48.763 z">
+                        </path>
+                        <path
+                            d="M99.332,97.164c4.143,0,7.5-3.358,7.5-7.5V7.5c0-4.142-3.357-7.5-7.5-7.5s-7.5,3.358-7.5,7.5v82.164 C91.832,93.807,95.189,97.164,99.332,97.164z">
+                        </path>
+                    </g>
                 </svg>
-                <input class="color" type="color" id="second-color" value="#0000ff"><br>
+            </button>
+            <button class="buttons" id="breath" onclick="breath()">Breath</button>
+            <button class="buttons" id="cycle" onclick="cycle()">Cycle to</button>
+            <button class="buttons" id="lottery" onclick="lottery()">Lottery</button>
+            <button class="buttons" id="tornado" onclick="candyTornado()">Candy Tornado</button>
+            <button class="buttons" id="settings" popovertarget="settings-container">
+                <svg viewBox="0 -64 640 640">
+                    <path
+                        d="M512.1 191l-8.2 14.3c-3 5.3-9.4 7.5-15.1 5.4-11.8-4.4-22.6-10.7-32.1-18.6-4.6-3.8-5.8-10.5-2.8-15.7l8.2-14.3c-6.9-8-12.3-17.3-15.9-27.4h-16.5c-6 0-11.2-4.3-12.2-10.3-2-12-2.1-24.6 0-37.1 1-6 6.2-10.4 12.2-10.4h16.5c3.6-10.1 9-19.4 15.9-27.4l-8.2-14.3c-3-5.2-1.9-11.9 2.8-15.7 9.5-7.9 20.4-14.2 32.1-18.6 5.7-2.1 12.1.1 15.1 5.4l8.2 14.3c10.5-1.9 21.2-1.9 31.7 0L552 6.3c3-5.3 9.4-7.5 15.1-5.4 11.8 4.4 22.6 10.7 32.1 18.6 4.6 3.8 5.8 10.5 2.8 15.7l-8.2 14.3c6.9 8 12.3 17.3 15.9 27.4h16.5c6 0 11.2 4.3 12.2 10.3 2 12 2.1 24.6 0 37.1-1 6-6.2 10.4-12.2 10.4h-16.5c-3.6 10.1-9 19.4-15.9 27.4l8.2 14.3c3 5.2 1.9 11.9-2.8 15.7-9.5 7.9-20.4 14.2-32.1 18.6-5.7 2.1-12.1-.1-15.1-5.4l-8.2-14.3c-10.4 1.9-21.2 1.9-31.7 0zm-10.5-58.8c38.5 29.6 82.4-14.3 52.8-52.8-38.5-29.7-82.4 14.3-52.8 52.8zM386.3 286.1l33.7 16.8c10.1 5.8 14.5 18.1 10.5 29.1-8.9 24.2-26.4 46.4-42.6 65.8-7.4 8.9-20.2 11.1-30.3 5.3l-29.1-16.8c-16 13.7-34.6 24.6-54.9 31.7v33.6c0 11.6-8.3 21.6-19.7 23.6-24.6 4.2-50.4 4.4-75.9 0-11.5-2-20-11.9-20-23.6V418c-20.3-7.2-38.9-18-54.9-31.7L74 403c-10 5.8-22.9 3.6-30.3-5.3-16.2-19.4-33.3-41.6-42.2-65.7-4-10.9.4-23.2 10.5-29.1l33.3-16.8c-3.9-20.9-3.9-42.4 0-63.4L12 205.8c-10.1-5.8-14.6-18.1-10.5-29 8.9-24.2 26-46.4 42.2-65.8 7.4-8.9 20.2-11.1 30.3-5.3l29.1 16.8c16-13.7 34.6-24.6 54.9-31.7V57.1c0-11.5 8.2-21.5 19.6-23.5 24.6-4.2 50.5-4.4 76-.1 11.5 2 20 11.9 20 23.6v33.6c20.3 7.2 38.9 18 54.9 31.7l29.1-16.8c10-5.8 22.9-3.6 30.3 5.3 16.2 19.4 33.2 41.6 42.1 65.8 4 10.9.1 23.2-10 29.1l-33.7 16.8c3.9 21 3.9 42.5 0 63.5zm-117.6 21.1c59.2-77-28.7-164.9-105.7-105.7-59.2 77 28.7 164.9 105.7 105.7zm243.4 182.7l-8.2 14.3c-3 5.3-9.4 7.5-15.1 5.4-11.8-4.4-22.6-10.7-32.1-18.6-4.6-3.8-5.8-10.5-2.8-15.7l8.2-14.3c-6.9-8-12.3-17.3-15.9-27.4h-16.5c-6 0-11.2-4.3-12.2-10.3-2-12-2.1-24.6 0-37.1 1-6 6.2-10.4 12.2-10.4h16.5c3.6-10.1 9-19.4 15.9-27.4l-8.2-14.3c-3-5.2-1.9-11.9 2.8-15.7 9.5-7.9 20.4-14.2 32.1-18.6 5.7-2.1 12.1.1 15.1 5.4l8.2 14.3c10.5-1.9 21.2-1.9 31.7 0l8.2-14.3c3-5.3 9.4-7.5 15.1-5.4 11.8 4.4 22.6 10.7 32.1 18.6 4.6 3.8 5.8 10.5 2.8 15.7l-8.2 14.3c6.9 8 12.3 17.3 15.9 27.4h16.5c6 0 11.2 4.3 12.2 10.3 2 12 2.1 24.6 0 37.1-1 6-6.2 10.4-12.2 10.4h-16.5c-3.6 10.1-9 19.4-15.9 27.4l8.2 14.3c3 5.2 1.9 11.9-2.8 15.7-9.5 7.9-20.4 14.2-32.1 18.6-5.7 2.1-12.1-.1-15.1-5.4l-8.2-14.3c-10.4 1.9-21.2 1.9-31.7 0zM501.6 431c38.5 29.6 82.4-14.3 52.8-52.8-38.5-29.6-82.4 14.3-52.8 52.8z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <div id="settings-container" popover>
+            <div class="settings">
+                <span>Breath Settings</span>
+                <label for="breath-speed">Speed:</label>
+                <input class="slider" type="range" id="breath-speed" min="1" max="30" value="10">
+            </div>
+            <div class="settings">
+                <span>Cycle Settings</span>
+                <label for="cycle-delay">Delay:</label>
+                <input class="slider" type="range" id="cycle-delay" min="1" max="20" value="1">
+                <div class="settings-color-picker">
+                    <input class="color" type="color" id="cycle-first-color" value="#ff0000">
+                    <svg viewBox="0 0 340.034 340.034">
+                        <polygon
+                            points="222.814,52.783 200.902,74.686 280.748,154.528 0,154.528 0,185.513 280.748,185.513 200.902,265.353 222.814,287.252 340.034,170.023 ">
+                        </polygon>
+                    </svg>
+                    <input class="color" type="color" id="cycle-second-color" value="#0000ff">
+                </div>
+            </div>
+            <div class="settings">
+                <span>Lottery Settings</span>
+                <label for="lottery-delay">Delay:</label>
+                <input class="slider" type="range" id="lottery-delay" min="100" max="1000" value="1">
+                <div class="settings-color-picker">
+                    <input class="color" type="color" id="lottery-main-color" value="#ff0000">
+                    <svg viewBox="0 0 340.034 340.034">
+                        <polygon
+                            points="222.814,52.783 200.902,74.686 280.748,154.528 0,154.528 0,185.513 280.748,185.513 200.902,265.353 222.814,287.252 340.034,170.023 ">
+                        </polygon>
+                    </svg>
+                    <input class="color" type="color" id="lottery-balls-color" value="#0000ff">
+                </div>
+            </div>
+            <div class="settings">
+                <span>Tornado-Settings</span>
+                <label for="sat">Saturation:</label>
+                <input class="slider" type="range" id="tornado-saturation" min="0" max="255" value="255">
+
+                <label for="val">Value:</label>
+                <input class="slider" type="range" id="tornado-value" min="0" max="255" value="255">
+
+                <label for="delay">Delay:</label>
+                <input class="slider" type="range" id="tornado-delay" min="10" max="50" value="10">
+
+                <label for="gap">Gap:</label>
+                <input class="slider" type="range" id="tornado-gap" min="12000" max="80000" value="36358">
+
+                <label for="cycle-speed">Cycle Speed:</label>
+                <input class="slider" type="range" id="tornado-speed" min="-80000" max="80000" value="4885">
             </div>
         </div>
-        <div class="settings">
-            <span>Lottery Settings</span><br>
-            <label for="lottery-delay">Delay:</label>
-            <input class="slider" type="range" id="lottery-delay" min="100" max="1000" value="1">
-            <div class="settings-color-picker">
-                <input class="color" type="color" id="main" value="#ff0000"><br>
-                <svg  width="25" height="25" fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 340.034 340.034" xml:space="preserve">
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <polygon points="222.814,52.783 200.902,74.686 280.748,154.528 0,154.528 0,185.513 280.748,185.513 200.902,265.353 222.814,287.252 340.034,170.023 "></polygon> </g> </g> </g>
-                </svg>
-                <input class="color" type="color" id="balls" value="#0000ff"><br>
-            </div>
-        </div>
-        <div class="settings">
-            <span>Tornado-Settings</span><br>
-            <label for="sat">Saturation:</label>
-            <input class="slider" type="range" id="sat" min="0" max="255" value="255">
-
-            <label for="val">Value:</label>
-            <input class="slider" type="range" id="val" min="0" max="255" value="255">
-
-            <label for="delay">Delay:</label>
-            <input class="slider" type="range" id="delay" min="10" max="50" value="10">
-
-            <label for="gap">Gap:</label>
-            <input class="slider" type="range" id="gap" min="12000" max="80000" value="36358">
-
-            <label for="cycle-speed">Cycle Speed:</label>
-            <input class="slider" type="range" id="cycle-speed" min="-80000" max="80000" value="4885">
-        </div>
     </div>
-</div>
 </body>
-<script src="/js/main.js"></script>
+<script src="./main.js"></script>
 </html>
