@@ -24,7 +24,8 @@ async def connect_to_wifi() -> None:
     async def check_connection() -> bool:
         counter = 0
         while counter != 5:
-            if global_wifi.status() == 3: return True
+            if global_wifi.status() == 3:
+                return True
             await asyncio.sleep(1)
             counter += 1
         return False
@@ -33,7 +34,7 @@ async def connect_to_wifi() -> None:
         global_wifi.connect(SETTINGS["SSID"], SETTINGS["Password"])
 
         if await check_connection():
-            print(f"\033[92mConnected successfully to Wi-Fi! As: {global_wifi.ifconfig()[0]}\033[0m")
+            print("\033[92mConnected successfully to Wi-Fi! As: {global_wifi.ifconfig()[0]}\033[0m")
             break
 
         global_wifi.disconnect()
