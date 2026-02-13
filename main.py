@@ -48,7 +48,8 @@ try:
         print("\033[91mTrying to connect to Wi-Fi continuously!\033[0m")
     if "StartColor" in SETTINGS:
         led.fade(SETTINGS["StartColor"])
-except Exception:
+except Exception as e:
+    print(f"\033[91m{e}\033[0m")
     pass
 
 
