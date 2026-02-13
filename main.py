@@ -112,7 +112,7 @@ def homepage(request: Request) -> Response:
 
 
 @app.get("/favicon.png")
-def homepage(request: Request) -> Response:
+def get_favicon(request: Request) -> Response:
     """
     Maps the favicon request and sends it to the user.
     :param request: the clients request
