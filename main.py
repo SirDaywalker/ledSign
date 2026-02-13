@@ -3,6 +3,7 @@ __author__ = "Jannis Dickel"
 from lib.leds import Leds
 from lib.usSensor import UsSensor
 from lib.microdot_asyncio import Microdot, send_file, Response, Request
+from boot import wifi
 
 import uasyncio as asyncio
 
@@ -15,12 +16,14 @@ current_task: asyncio.Task = None
 
 
 try:
-    if wifi.status() == 3:   # noqa: F821 (wifi is global in boot.py)
+    if wifi.status() == 3:
         led.blink_up(led.GREEN)
-        if "StartColor" in SETTINGS:
-            led.fade(SETTINGS["StartColor"])
+    else:
+        led.blink_up(0.2)
+    if "StartColor" in SETTINGS:
+        led.fade(SETTINGS["StartColor"])
 except Exception:
-    pass 
+    pass
 
 
 def start_led_task(coro):
@@ -229,7 +232,3 @@ async def lottery(request) -> (str, int):
         return "Non-fitting params", 400
 
     return "Doing da thing", 200
-
-
-asyncio.create_task(run_colors())
-start_server()

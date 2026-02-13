@@ -168,17 +168,18 @@ class Leds:
             self.set_all(rgb)
             await asyncio.sleep_ms(delay)
 
-    def blink_up(self, target_color: tuple[int, int, int] = RED) -> None:
+    def blink_up(self, sleep_time: float = 0.5, target_color: tuple[int, int, int] = RED) -> None:
         """
         Blinks-up 2 times in the given color. Red by default.
-        :param target_color: the to set to.
+        :param sleep_time: time in seconds between each blink
+        :param target_color: the color to set to (default: red)
         :return: None
         """
         for i in range(2):
             self.fade(target_color)
-            sleep(0.5)
+            sleep(sleep_time)
             self.fade(self.OFF)
-            sleep(0.5)
+            sleep(sleep_time)
 
     async def breath(self, target_color: tuple[int, int, int], delay: int = 10) -> None:
         """
