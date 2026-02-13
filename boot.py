@@ -6,30 +6,40 @@ from time import sleep
 from settings import SETTINGS
 
 
-def connect_to_wifi(ssid: str, psw: str) -> WLAN:
+def connect_to_wifi(ssid: str, password: str) -> WLAN:
     """
     Connects to the Wi-Fi network.
 
     :param ssid: the Wi-Fi name.
-    :param psw: the password of the network.
+    :param password: the password of the network.
     :return: the new Wi-Fi-Object.
     """
-    wlan: WLAN = WLAN(STA_IF)
-    wlan.active(True)
-    wlan.disconnect()
+    try:
+        wifi: WLAN = WLAN(STA_IF)
+        wifi.active(True)
+        wifi.disconnect()
 
-    print("Trying to connect to wifi...", end="")
-    wlan.connect(ssid, psw)
+        print("Trying to connect to Wi-Fi...", end="")
+        wifi.connect(ssid, password)
 
-    while not wlan.status() == 3:
-        print('.', end="")
-        sleep(1)
+        counter = 0
+        while wifi.status() != 3:
+            if counter == 5:
+                wifi.disconnect()
+                raise Exception("Couldn't connect to Wi-Fi! Please check your credentials or WiFi connection.")
+            print('.', end="")
+            counter += 1
+            sleep(1)
 
-    print('\n', f"\033[92mConnected successfully to Wifi! As: {wlan.ifconfig()[0]}\033[0m")
-    return wlan
+        print(f"\033[92mConnected successfully to Wi-Fi! As: {wifi.ifconfig()[0]}\033[0m")
+        return wifi
+
+    except Exception as e:
+        print(f"\033[91m{e}\033[0m")
+        return None
 
 
 print("Booting up...")
-wifi = connect_to_wifi(SETTINGS["SSID"], SETTINGS["Password"])
+global_wifi = connect_to_wifi(SETTINGS["SSID"], SETTINGS["Password"])
 print("Starting webserver...")
 

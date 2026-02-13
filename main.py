@@ -3,7 +3,7 @@ __author__ = "Jannis Dickel"
 from lib.leds import Leds
 from lib.usSensor import UsSensor
 from lib.microdot_asyncio import Microdot, send_file, Response, Request
-from boot import wifi
+from boot import global_wifi
 
 import uasyncio as asyncio
 
@@ -14,12 +14,37 @@ us_sensor: UsSensor = UsSensor(SETTINGS["TriggerPin"], SETTINGS["EchoPin"])
 app: Microdot = Microdot()
 current_task: asyncio.Task = None 
 
+async def connect_to_wifi() -> None:
+    """
+    Function which continuously tries to connect to the Wi-Fi.
+    Distance measuring with the us-sensor will still work and change the LEDs.
+
+    :return: None
+    """
+    async def check_connection() -> bool:
+        counter = 0
+        while counter != 5:
+            if global_wifi.status() == 3: return True
+            await asyncio.sleep(1)
+            counter += 1
+        return False
+
+    while True:
+        global_wifi.connect(SETTINGS["SSID"], SETTINGS["Password"])
+
+        if await check_connection():
+            print(f"\033[92mConnected successfully to Wi-Fi! As: {global_wifi.ifconfig()[0]}\033[0m")
+            break
+
+        global_wifi.disconnect()
 
 try:
-    if wifi.status() == 3:
+    if global_wifi and global_wifi.status() == 3:
         led.blink_up(led.GREEN)
     else:
         led.blink_up(0.2)
+        asyncio.create_task(connect_to_wifi())
+        print(f"\033[91mTrying to connect to Wi-Fi continuously!\033[0m")
     if "StartColor" in SETTINGS:
         led.fade(SETTINGS["StartColor"])
 except Exception:
