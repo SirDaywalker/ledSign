@@ -60,7 +60,7 @@ body {
     grid-template-columns: repeat(auto-fit, 6em);
 }
 
-.buttons {
+.button {
     width: 6em;
     aspect-ratio: 1;
     border: 2px solid #ffffff;
@@ -74,13 +74,13 @@ body {
     transition: 200ms;
 }
 
-.buttons:hover {
+.button:hover {
     background-color: #ffffff;
     color: var(--bg);
     transition: all 0.5s;
 }
 
-.buttons.pressed {
+.button.pressed {
     animation: pressEffect 400ms ease-out;
 }
 
@@ -106,12 +106,14 @@ body {
 }
 
 #settings svg,
-#turn-off svg {
+#turn-off svg,
+#close-popover svg {
     fill: #ffffff;
 }
 
 #settings:hover svg,
-#turn-off:hover svg {
+#turn-off:hover svg,
+#close-popover:hover svg {
     fill: var(--bg);
 }
 
@@ -121,11 +123,8 @@ body {
     border: 2px solid #ffffff;
     padding: 1em;
     width: 100%;
-    max-width: 22em;
-    margin: 0 auto;
     border-radius: 1em;
     max-height: 90vh;
-    overflow-y: auto;
     box-sizing: border-box;
 }
 
@@ -134,13 +133,32 @@ body {
     inset: 0;
     margin: auto;
     max-height: 90vh;
-    max-width: 22em;
-    transform: none;
+    max-width: 20em;
+}
+
+#close-popover{
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3em;
+    aspect-ratio: 1;
+    border: 2px solid #ffffff;
+    border-radius: 0.5em;
+    background: transparent;
+    cursor: pointer;
+}
+
+#close-popover:hover {
+    background-color: #ffffff;
+    color: var(--bg);
+    transition: all 0.5s;
 }
 
 .settings {
     margin-bottom: 1em;
-    text-align: center;
 }
 
 .settings span {
@@ -178,7 +196,7 @@ body {
 }
 
 .slider {
-    width: 13em;
+    width: 15em;
     height: 1em;
     border: 2px solid #ffffff;
     border-radius: 10px;
