@@ -244,8 +244,8 @@ async def lottery(request) -> (str, int):
 
     return "Doing da thing", 200
 
-print("Starting Ultrasound-Sensor...", end="")
+print("Starting Ultrasound-Sensor...")
 asyncio.create_task(run_colors())
-print("\t...Done")
+print("  ...Done")
 print("Starting webserver...")
 start_server()
