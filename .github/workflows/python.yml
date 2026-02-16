@@ -1,4 +1,4 @@
-name: MicroPython Syntax & Lint
+name: Python Syntax & Lint
 
 on:
   push:
