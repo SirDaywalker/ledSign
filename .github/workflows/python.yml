@@ -1,4 +1,4 @@
-name: Python Syntax & Lint
+name: Python Lint
 
 on:
   push:
