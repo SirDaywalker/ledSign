@@ -118,7 +118,7 @@ def connect_to_wifi(ssid: str, psw: str) -> WLAN:
         print('.', end="")
         sleep(1)
 
-    print('\n', f"\t\033[92mConnected successfully to Wifi! As: {wifi.ifconfig()[0]}\033[0m", sep="")
+    print('\n', f"  \033[92mConnected successfully to Wifi! As: {wifi.ifconfig()[0]}\033[0m", sep="")
     return wifi
 
 
