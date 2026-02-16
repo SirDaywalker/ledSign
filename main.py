@@ -41,11 +41,11 @@ async def connect_to_wifi() -> None:
 
 try:
     if global_wifi and global_wifi.status() == 3:
-        led.blink_up(led.GREEN)
+        led.blink_up(target_color=led.GREEN)
     else:
-        led.blink_up(0.2)
+        led.blink_up(sleep_time=0.2)
         asyncio.create_task(connect_to_wifi())
-        print("\033[91mTrying to connect to Wi-Fi continuously!\033[0m")
+        print("  Trying to connect to Wi-Fi continuously!")
     if "StartColor" in SETTINGS:
         led.fade(SETTINGS["StartColor"])
 except Exception as e:
