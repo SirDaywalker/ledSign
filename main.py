@@ -86,6 +86,74 @@ def start_server() -> None:
         print("Server shut down due to error:", e)
 
 
+def get_current_version():
+    """
+    Retrieves the current version of the project from the "pyproject.toml" file.
+
+    This function scans the "pyproject.toml" file to locate and extract the version
+    information specified under the [project] section. If the file cannot be accessed
+    or the version cannot be determined, it returns "unknown".
+
+    Returns:
+        str: The project version as a string if found; otherwise, "unknown".
+
+    Raises:
+        OSError: If there is an issue accessing the "pyproject.toml" file.
+    """
+    try:
+        in_project_section = False
+
+        with open("pyproject.toml", "r") as pyproject_file:
+            for line in pyproject_file:
+                line = line.strip()
+
+                # Kommentare/Leerzeilen ignorieren
+                if not line or line.startswith("#"):
+                    continue
+
+                # Section erkennen
+                if line == "[project]":
+                    in_project_section = True
+                    continue
+
+                # wenn neue Section anfängt -> project-section verlassen
+                if line.startswith("[") and line.endswith("]") and line != "[project]":
+                    in_project_section = False
+                    continue
+
+                # version innerhalb [project] suchen
+                if in_project_section and line.startswith("version"):
+                    # version = "0.1.0"
+                    parts = line.split("=", 1)
+                    version = parts[1].strip().strip('"')
+                    return version
+
+    except OSError:
+        return "unknown"
+
+    return "unknown"
+
+
+def load_homepage_with_version():
+    """
+    Loads the HTML content of the homepage, inserts the current version into
+    the predefined {{VERSION}} placeholder, and returns the processed HTML
+    content. The current version is determined using the get_current_version
+    function.
+
+    Returns:
+        str: The processed HTML content with the current version inserted into the
+        {{VERSION}} placeholder.
+    """
+    with open("/lib/static/index.html", "r") as html_file:
+        html = html_file.read()
+
+    version = get_current_version()
+    html = html.replace("{{VERSION}}", version)
+
+    return html
+
+
 @app.before_request
 async def kill_current_task(request: Request) -> None:
     """
@@ -108,7 +176,7 @@ def homepage(request: Request) -> Response:
     :param request: the clients request (homepage call)
     :return: the index.html
     """
-    return send_file("/lib/static/index.html", content_type="text/html")
+    return Response(load_homepage_with_version(), headers={"Content-Type": "text/html"})
 
 
 @app.get("/favicon.png")
