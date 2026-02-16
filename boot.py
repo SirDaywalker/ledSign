@@ -4,9 +4,10 @@ __credits__ = ["Leon Reusch", "Jonas Witte"]
 from network import WLAN, STA_IF
 from time import sleep
 from settings import SETTINGS
+import uos
 
 
-def get_current_version():
+def get_current_version() -> str:
     """
     Retrieves the current version of the project from the "pyproject.toml" file.
 
@@ -54,6 +55,25 @@ def get_current_version():
     return "unknown"
 
 
+def ensure_dir(path) -> None:
+    """
+    Ensures that a directory exists at the specified path. If the directory
+    does not exist, it attempts to create it. If creation fails due to an
+    OSError, the exception is silently ignored.
+
+    Parameters:
+    path (str): The path of the directory to verify or create.
+
+    Returns:
+    None
+    """
+    try:
+        uos.mkdir(path)
+        print(f"\033Created directory: {path}")
+    except OSError:
+        pass
+
+
 def generate_homepage_with_version() -> None:
     """
     Loads the HTML content of the homepage, inserts the current version into
@@ -65,16 +85,18 @@ def generate_homepage_with_version() -> None:
         str: The processed HTML content with the current version inserted into the
         {{VERSION}} placeholder.
     """
-    print("Generating homepage with version...", end="")
+    print("Generating homepage with version...")
     with open("/lib/static/index.html", "r") as html_file:
         html = html_file.read()
 
     version = get_current_version()
 
-    with open("/lib/static/index_with_version.html", "w") as html_with_version_file:
+    ensure_dir("/lib/generated")
+
+    with open("/lib/generated/index_with_version.html", "w") as html_with_version_file:
         html_with_version_file.write(html.replace("{{VERSION}}", version))
 
-    print("Done")
+    print("\033...Done")
 
 
 def connect_to_wifi(ssid: str, psw: str) -> WLAN:
