@@ -1,6 +1,6 @@
 [project]
 name = "ledSign"
-version = "0.1.0"
+version = "0.1.1"
 description = "LED Schild Projekt für Pico W"
 readme = "README.md"
 license = { file = "LICENSE" }
