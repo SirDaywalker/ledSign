@@ -3,7 +3,7 @@ __author__ = "Jannis Dickel"
 from lib.leds import Leds
 from lib.usSensor import UsSensor
 from lib.microdot_asyncio import Microdot, send_file, Response, Request
-from boot import wifi
+from boot import global_wifi
 
 import uasyncio as asyncio
 
@@ -16,7 +16,7 @@ current_task: asyncio.Task = None
 
 # This is still part of the Wi-Fi connection
 try:
-    if wifi.status() == 3:
+    if global_wifi.status() == 3:
         led.blink_up(target_color=led.GREEN)
     else:
         led.blink_up(sleep_time=0.2)

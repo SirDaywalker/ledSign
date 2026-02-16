@@ -14,20 +14,20 @@ def connect_to_wifi(ssid: str, psw: str) -> WLAN:
     :param psw: the password of the network.
     :return: the new Wi-Fi-Object.
     """
-    wlan: WLAN = WLAN(STA_IF)
-    wlan.active(True)
-    wlan.disconnect()
+    wifi: WLAN = WLAN(STA_IF)
+    wifi.active(True)
+    wifi.disconnect()
 
     print("Trying to connect to wifi...", end="")
-    wlan.connect(ssid, psw)
+    wifi.connect(ssid, psw)
 
-    while not wlan.status() == 3:
+    while not wifi.status() == 3:
         print('.', end="")
         sleep(1)
 
-    print('\n', f"\033[92mConnected successfully to Wifi! As: {wlan.ifconfig()[0]}\033[0m")
-    return wlan
+    print('\n', f"\033[92mConnected successfully to Wifi! As: {wifi.ifconfig()[0]}\033[0m")
+    return wifi
 
 
 print("Booting up...")
-wifi = connect_to_wifi(SETTINGS["SSID"], SETTINGS["Password"])
+global_wifi = connect_to_wifi(SETTINGS["SSID"], SETTINGS["Password"])
