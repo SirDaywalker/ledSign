@@ -15,9 +15,3 @@ build-backend = "setuptools.build_meta"
 version_toml = ["pyproject.toml:project.version"]
 branch = "main"
 allow_zero_version = true
-
-[tool.semantic_release.changelog.default_templates]
-changelog_file = "CHANGELOG.md"
-
-[tool.semantic_release.publish]
-upload_to_vcs_release = true
