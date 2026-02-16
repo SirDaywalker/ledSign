@@ -1,0 +1,27 @@
+[project]
+name = "ledSign"
+version = "0.0.0"                   # Ausgangs-Version für semantic-release
+description = "LED Schild Projekt für Pico W"
+readme = "README.md"
+license = { file = "LICENSE" }
+dependencies = []
+requires-python = ">=3.0"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.semantic_release]
+# Version automatisch in pyproject.toml setzen
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+changelog_file = "CHANGELOG.md"
+build_command = ""
+upload_to_repository = false
+upload_to_release = true
+
+# Automatische Erstellung des Changelogs
+changelog = true
+
+# SemVer erlaubt auch 0.x.x
+allow_zero_version = true
