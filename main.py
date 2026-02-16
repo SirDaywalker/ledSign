@@ -109,10 +109,10 @@ def homepage(request: Request) -> Response:
     :param request: the clients request (homepage call)
     :return: the index.html
     """
-    return send_file("/lib/generated/index_with_version.html", content_type="text/html")
+    return send_file("/lib/generated/index_with_version.html")
 
 
-@app.get("/favicon.png")
+@app.get("favicon/<path:path>")
 def get_favicon(request: Request, path: str) -> Response:
     """
     Maps the favicon request and sends it to the user.
@@ -246,6 +246,6 @@ async def lottery(request) -> (str, int):
 
 print("Starting Ultrasound-Sensor...", end="")
 asyncio.create_task(run_colors())
-print("\033...Done")
+print("\t...Done")
 print("Starting webserver...")
 start_server()

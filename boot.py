@@ -69,7 +69,7 @@ def ensure_dir(path) -> None:
     """
     try:
         uos.mkdir(path)
-        print(f"\033Created directory: {path}")
+        print(f"\tCreated directory: {path}")
     except OSError:
         pass
 
@@ -96,7 +96,7 @@ def generate_homepage_with_version() -> None:
     with open("/lib/generated/index_with_version.html", "w") as html_with_version_file:
         html_with_version_file.write(html.replace("{{VERSION}}", version))
 
-    print("\033...Done")
+    print("\t...Done")
 
 
 def connect_to_wifi(ssid: str, psw: str) -> WLAN:
@@ -118,7 +118,7 @@ def connect_to_wifi(ssid: str, psw: str) -> WLAN:
         print('.', end="")
         sleep(1)
 
-    print('\n', f"\033[92mConnected successfully to Wifi! As: {wifi.ifconfig()[0]}\033[0m")
+    print('\n', f"\t\033[92mConnected successfully to Wifi! As: {wifi.ifconfig()[0]}\033[0m")
     return wifi
 
 
