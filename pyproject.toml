@@ -1,0 +1,23 @@
+[project]
+name = "ledSign"
+version = "0.1.0"
+description = "LED Schild Projekt für Pico W"
+readme = "README.md"
+license = { file = "LICENSE" }
+dependencies = []
+requires-python = ">=3.0"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+allow_zero_version = true
+
+[tool.semantic_release.changelog.default_templates]
+changelog_file = "CHANGELOG.md"
+
+[tool.semantic_release.publish]
+upload_to_vcs_release = true

@@ -106,11 +106,10 @@ def start_server() -> None:
     Starts the Server.
     """
     try:
-        print("Server successfully started")
         app.run(port=80)
     except Exception as e:
-        print("Server shut down due to error:", e)
         app.shutdown()
+        print("Server shut down due to error:", e)
 
 
 @app.before_request
@@ -136,6 +135,16 @@ def homepage(request: Request) -> Response:
     :return: the index.html
     """
     return send_file("/lib/static/index.html", content_type="text/html")
+
+
+@app.get("/favicon.png")
+def get_favicon(request: Request) -> Response:
+    """
+    Maps the favicon request and sends it to the user.
+    :param request: the clients request
+    :return: the favicon.png
+    """
+    return send_file("/lib/static/favicon.png", content_type="image/png")
 
 
 @app.get("/css/<path:path>")
@@ -259,3 +268,9 @@ async def lottery(request) -> (str, int):
         return "Non-fitting params", 400
 
     return "Doing da thing", 200
+
+print("Starting Ultrasound-Sensor...", end="")
+asyncio.create_task(run_colors())
+print("Done")
+print("Starting webserver...")
+start_server()

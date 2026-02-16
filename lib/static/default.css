@@ -22,7 +22,7 @@ body {
     border-radius: 0.8em;
     font-weight: bold;
     opacity: 0;
-    box-shadow: 0 0 12px rgba(255,255,255,0.6);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
     transition:
         left 0.4s ease-out,
         opacity 0.4s ease-out;
@@ -38,31 +38,29 @@ body {
     opacity: 0;
 }
 
-.container {
+#root-container {
     margin: 0 auto;
     padding: 1em;
     max-width: 50em;
-    text-align: center; 
+    text-align: center;
 }
 
-#picker {
+#color-picker {
     margin: 0 auto;
     display: block;
     width: fit-content;
 }
-
 
 .options {
     display: grid;
     gap: 1em;
     width: 100%;
     margin: 2em auto;
-    justify-content: center; 
-    grid-template-columns: repeat(auto-fit, 6em); 
+    justify-content: center;
+    grid-template-columns: repeat(auto-fit, 6em);
 }
 
-
-.buttons {
+.button {
     width: 6em;
     aspect-ratio: 1;
     border: 2px solid #ffffff;
@@ -76,13 +74,13 @@ body {
     transition: 200ms;
 }
 
-.buttons:hover {
+.button:hover {
     background-color: #ffffff;
     color: var(--bg);
     transition: all 0.5s;
 }
 
-.buttons.pressed {
+.button.pressed {
     animation: pressEffect 400ms ease-out;
 }
 
@@ -107,12 +105,15 @@ body {
     }
 }
 
-
-#settings-button svg, #off > svg{
+#settings svg,
+#turn-off svg,
+#close-popover svg {
     fill: #ffffff;
 }
 
-#settings-button:hover svg,  #off:hover svg{
+#settings:hover svg,
+#turn-off:hover svg,
+#close-popover:hover svg {
     fill: var(--bg);
 }
 
@@ -122,11 +123,8 @@ body {
     border: 2px solid #ffffff;
     padding: 1em;
     width: 100%;
-    max-width: 22em;
-    margin: 0 auto;
     border-radius: 1em;
-    max-height: 90vh; 
-    overflow-y: auto; 
+    max-height: 90vh;
     box-sizing: border-box;
 }
 
@@ -135,22 +133,41 @@ body {
     inset: 0;
     margin: auto;
     max-height: 90vh;
-    max-width: 22em;
-    transform: none;
+    max-width: 20em;
+}
+
+#close-popover{
+    position: absolute;
+    right: 1em;
+    top: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border: 2px solid #ffffff;
+    border-radius: 0.5em;
+    background: transparent;
+    cursor: pointer;
+}
+
+#close-popover:hover {
+    background-color: #ffffff;
+    color: var(--bg);
+    transition: all 0.5s;
 }
 
 .settings {
     margin-bottom: 1em;
-    text-align: center;
 }
 
 .settings span {
     font-weight: bold;
     display: block;
     color: #ffffff;
+    margin: 1em 0 0.5em 0;
 }
 
-.settings label { 
+.settings label {
     display: block;
     margin-bottom: 0.3em;
     color: #ffffff;
@@ -163,8 +180,14 @@ body {
     margin: 1em 0;
 }
 
+.settings-color-picker svg {
+    width: 25px;
+    height: 25px;
+    fill: #ffffff;
+}
+
 .color {
-    margin: 0 auto 0 auto;
+    margin: 0 auto;
     width: 3em;
     height: 3em;
     border: none;
@@ -172,8 +195,7 @@ body {
 }
 
 .slider {
-    -webkit-appearance: none;
-    width: 13em;
+    width: 15em;
     height: 1em;
     border: 2px solid #ffffff;
     border-radius: 10px;
