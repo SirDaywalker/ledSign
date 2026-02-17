@@ -12,14 +12,42 @@ from settings import SETTINGS
 led: Leds = Leds(SETTINGS["NumLEDs"], SETTINGS["LEDPin"])
 us_sensor: UsSensor = UsSensor(SETTINGS["TriggerPin"], SETTINGS["EchoPin"])
 app: Microdot = Microdot()
-current_task: asyncio.Task = None 
+current_task: asyncio.Task = None
 
-# This is still part of the Wi-Fi connection
+
+async def check_connection() -> bool:
+    counter = 0
+    while counter != 5:
+        if global_wifi.status() == 3:
+            return True
+        await asyncio.sleep(1)
+        counter += 1
+    return False
+
+
+async def connect_to_wifi() -> None:
+    """
+    Function which continuously tries to connect to the Wi-Fi.
+    Distance measuring with the us-sensor will still work and change the LEDs.
+
+    :return: None
+    """
+    while True:
+        global_wifi.connect(SETTINGS["SSID"], SETTINGS["Password"])
+
+        if await check_connection():
+            print(f"\033[92mConnected successfully to Wi-Fi! As: {global_wifi.ifconfig()[0]}\033[0m")
+            break
+
+        global_wifi.disconnect()
+
 try:
     if global_wifi.status() == 3:
         led.blink_up(target_color=led.GREEN)
     else:
         led.blink_up(sleep_time=0.2)
+        asyncio.create_task(connect_to_wifi())
+        print("  Trying to connect to Wi-Fi continuously!")
     if "StartColor" in SETTINGS:
         led.fade(SETTINGS["StartColor"])
 except Exception as e:
@@ -243,8 +271,8 @@ async def lottery(request) -> (str, int):
 
     return "Doing da thing", 200
 
-print("Starting Ultrasound-Sensor...", end="")
+print("Starting Ultrasound-Sensor...")
 asyncio.create_task(run_colors())
-print("Done")
+print("  ...Done")
 print("Starting webserver...")
 start_server()
