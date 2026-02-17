@@ -12,7 +12,18 @@ from settings import SETTINGS
 led: Leds = Leds(SETTINGS["NumLEDs"], SETTINGS["LEDPin"])
 us_sensor: UsSensor = UsSensor(SETTINGS["TriggerPin"], SETTINGS["EchoPin"])
 app: Microdot = Microdot()
-current_task: asyncio.Task = None 
+current_task: asyncio.Task = None
+
+
+async def check_connection() -> bool:
+    counter = 0
+    while counter != 5:
+        if global_wifi.status() == 3:
+            return True
+        await asyncio.sleep(1)
+        counter += 1
+    return False
+
 
 async def connect_to_wifi() -> None:
     """
@@ -21,15 +32,6 @@ async def connect_to_wifi() -> None:
 
     :return: None
     """
-    async def check_connection() -> bool:
-        counter = 0
-        while counter != 5:
-            if global_wifi.status() == 3:
-                return True
-            await asyncio.sleep(1)
-            counter += 1
-        return False
-
     while True:
         global_wifi.connect(SETTINGS["SSID"], SETTINGS["Password"])
 
@@ -41,7 +43,7 @@ async def connect_to_wifi() -> None:
 
 # This is still part of the Wi-Fi connection
 try:
-    if global_wifi and global_wifi.status() == 3:
+    if global_wifi.status() == 3:
         led.blink_up(target_color=led.GREEN)
     else:
         led.blink_up(sleep_time=0.2)
