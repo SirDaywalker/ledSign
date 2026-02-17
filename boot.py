@@ -14,12 +14,11 @@ def connect_to_wifi(ssid: str, password: str) -> WLAN:
     :param password: the password of the network.
     :return: the new Wi-Fi-Object.
     """
+    wifi: WLAN = WLAN(STA_IF)
+    wifi.active(True)
+    wifi.disconnect()
+    print("Trying to connect to Wi-Fi...", end="")
     try:
-        wifi: WLAN = WLAN(STA_IF)
-        wifi.active(True)
-        wifi.disconnect()
-
-        print("Trying to connect to Wi-Fi...", end="")
         wifi.connect(ssid, password)
 
         counter = 0
@@ -35,8 +34,8 @@ def connect_to_wifi(ssid: str, password: str) -> WLAN:
         return wifi
 
     except Exception as e:
-        print(f"\033[91m{e}\033[0m")
-        return None
+        print('\n', f"  \033[91m{e}\033[0m", sep="")
+        return wifi
 
 
 print("Booting up...")
