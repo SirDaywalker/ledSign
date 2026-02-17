@@ -86,6 +86,7 @@ def start_server() -> None:
         print("Server shut down due to error:", e)
 
 
+
 @app.before_request
 async def kill_current_task(request: Request) -> None:
     """
@@ -108,17 +109,17 @@ def homepage(request: Request) -> Response:
     :param request: the clients request (homepage call)
     :return: the index.html
     """
-    return send_file("/lib/static/index.html", content_type="text/html")
+    return send_file("/lib/generated/index_with_version.html")
 
 
-@app.get("/favicon.png")
-def get_favicon(request: Request) -> Response:
+@app.get("favicon/<path:path>")
+def get_favicon(request: Request, path: str) -> Response:
     """
     Maps the favicon request and sends it to the user.
     :param request: the clients request
     :return: the favicon.png
     """
-    return send_file("/lib/static/favicon.png", content_type="image/png")
+    return send_file("/lib/static/" + path)
 
 
 @app.get("/css/<path:path>")
@@ -243,8 +244,8 @@ async def lottery(request) -> (str, int):
 
     return "Doing da thing", 200
 
-print("Starting Ultrasound-Sensor...", end="")
+print("Starting Ultrasound-Sensor...")
 asyncio.create_task(run_colors())
-print("Done")
+print("  ...Done")
 print("Starting webserver...")
 start_server()

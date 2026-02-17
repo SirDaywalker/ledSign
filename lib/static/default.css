@@ -51,6 +51,14 @@ body {
     width: fit-content;
 }
 
+#footer {
+    position: fixed;
+    right: 1em;
+    bottom: 1em;
+    color: #ffffff;
+    font-size: 0.9em;
+}
+
 .options {
     display: grid;
     gap: 1em;
