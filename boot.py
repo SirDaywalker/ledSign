@@ -123,7 +123,7 @@ def connect_to_wifi(ssid: str, password: str) -> WLAN:
             counter += 1
             sleep(1)
 
-        print(f"\033[92mConnected successfully to Wi-Fi! As: {wifi.ifconfig()[0]}\033[0m")
+        print('\n', f"\033[92mConnected successfully to Wi-Fi! As: {wifi.ifconfig()[0]}\033[0m", sep="")
         return wifi
 
     except Exception as e:

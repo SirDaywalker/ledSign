@@ -25,7 +25,7 @@ async def check_connection() -> bool:
     return False
 
 
-async def connect_to_wifi() -> None:
+def connect_to_wifi() -> None:
     """
     Function which continuously tries to connect to the Wi-Fi.
     Distance measuring with the us-sensor will still work and change the LEDs.
@@ -104,7 +104,7 @@ async def run_colors() -> None:
         await asyncio.sleep(0.2)
 
 
-def start_server() -> None:
+async def start_server() -> None:
     """
     Starts the Server.
     """
