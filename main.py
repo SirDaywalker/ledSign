@@ -94,6 +94,9 @@ async def kill_current_task(request: Request) -> None:
     """
     global current_task
 
+    if request.method == "GET":
+        return
+
     if current_task and not current_task.done():
         current_task.cancel()
         try:
