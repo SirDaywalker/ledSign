@@ -25,7 +25,7 @@ async def check_connection() -> bool:
     return False
 
 
-def connect_to_wifi() -> None:
+async def connect_to_wifi() -> None:
     """
     Function which continuously tries to connect to the Wi-Fi.
     Distance measuring with the us-sensor will still work and change the LEDs.
