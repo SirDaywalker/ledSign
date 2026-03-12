@@ -92,12 +92,15 @@ async def kill_current_task(request: Request) -> None:
     """
     Cancels the current LED task before any new command.
     """
+    if request.method == "GET":
+        return
+
     global current_task
 
     if current_task and not current_task.done():
         current_task.cancel()
         try:
-            await current_task 
+            await current_task
         except asyncio.CancelledError:
             pass
 
