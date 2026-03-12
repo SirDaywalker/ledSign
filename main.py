@@ -104,7 +104,7 @@ async def run_colors() -> None:
         await asyncio.sleep(0.2)
 
 
-async def start_server() -> None:
+def start_server() -> None:
     """
     Starts the Server.
     """
