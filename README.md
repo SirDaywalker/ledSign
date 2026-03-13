@@ -25,14 +25,14 @@ LED Sign is a Raspberry Pi Pico W project that
    - `settings.py`
    - `pyproject.toml`
    - `lib/` (entire folder)
-3. **Important**: Edit `settings.py` and set your Wi-Fi + pins.
+3. **Important**: Edit `settings.py` and set your Wi-Fi and pins.
 4. Reboot the Pico.
 5. Open the printed IP address in your browser: `http://<pico-ip>/`.
 
 ## How it works
 
 - On boot (`boot.py`) the Pico tries to connect to Wi-Fi and prints the assigned IP.
-- Also on boot, the homepage with current version is generated:
+- Also on boot, the homepage with the current version is generated:
   - `lib/static/index.html` contains a `{{VERSION}}` placeholder
   - `boot.py` replaces it with the version from `pyproject.toml`
   - output is written to `lib/generated/index_with_version.html`
