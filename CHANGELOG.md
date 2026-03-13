@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v0.2.1 (2026-03-12)
+
+### Bug Fixes
+
+- Current task will not be canceled on site refresh
+  ([#26](https://github.com/SirDaywalker/ledSign/pull/26),
+  [`2ae4620`](https://github.com/SirDaywalker/ledSign/commit/2ae4620c8de2395625b3c1bfbb5e2b73621514af))
+
+
 ## v0.2.0 (2026-02-17)
 
 ### Chores
