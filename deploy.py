@@ -1,15 +1,7 @@
-"""
-deploy.py – Automatisches Deployment auf den Raspberry Pi Pico W
-================================================================
-Verwendung:
-    python deploy.py                    # COM-Port wird automatisch erkannt, keine optionalen Uploads
-    python deploy.py --port COM3        # COM-Port manuell angeben
-    python deploy.py --optional-upload  # Optionale Dateien werden mit hochgeladen
-"""
-
 import argparse
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -24,20 +16,18 @@ ALWAYS_UPLOAD: list[str] = [
     "pyproject.toml"
 ]
 
-ALWAYS_UPLOAD_DIRS: list[str] = [
+OPTIONAL_UPLOAD_DIRS: list[str] = [
     "lib",
     "lib/static"
 ]
 
-OPTIONAL_UPLOAD: list[str] = [
-    "settings.py"
-]
+SETTINGS: str = "settings.py"
 
 # ---------------------------------------------------------------------------
 # Hilfsfunktionen
 # ---------------------------------------------------------------------------
 
-def run_command(cmd: list[str]) -> subprocess.CompletedProcess:
+def run_command(cmd: list[str], capture_output: bool = True) -> subprocess.CompletedProcess:
     """
     Runs a command in the shell and returns its completed process.
 
@@ -45,15 +35,19 @@ def run_command(cmd: list[str]) -> subprocess.CompletedProcess:
         cmd (list[str]): The command to execute in the shell, provided as a list
         where the first element is the command itself and the remaining are its
         arguments.
+        capture_output: bool, optional
+        Whether to capture and include the output (stdout and stderr) of the
+        executed command. Defaults to True.
+
 
     Returns:
         subprocess.CompletedProcess: An object containing information about the
         executed process including its output, error messages, and return code.
     """
-    return subprocess.run(cmd, capture_output=True, text=True)
+    return subprocess.run(cmd, capture_output=capture_output, text=True)
 
 
-def run_mpremote_command(port: str | None, *args: str) -> subprocess.CompletedProcess:
+def run_mpremote_command(port: str | None, *args: str, capture: bool = True) -> subprocess.CompletedProcess:
     """
     Executes an mpremote command using a subprocess and returns its result.
 
@@ -61,6 +55,8 @@ def run_mpremote_command(port: str | None, *args: str) -> subprocess.CompletedPr
         port (str | None): The port to which `mpremote` should connect. If None,
             no port connection is included in the command.
         *args (str): Additional arguments to pass to the `mpremote` command.
+        capture: Whether to capture and return the command's output.
+
 
     Returns:
         subprocess.CompletedProcess: The result of executing the `mpremote` command.
@@ -69,7 +65,7 @@ def run_mpremote_command(port: str | None, *args: str) -> subprocess.CompletedPr
     if port:
         cmd += ["connect", port]
     cmd += list(args)
-    return run_command(cmd)
+    return run_command(cmd, capture)
 
 
 def create_dir_on_pico(port: str | None, remote_dir: str) -> None:
@@ -155,7 +151,7 @@ def collect_relative_dir_files(directory: Path) -> list[tuple[Path, str]]:
             path of a local file and its string representation on the Raspberry Pi Pico.
     """
     files = []
-    for local_path in sorted(directory.rglob("*")):
+    for local_path in sorted(directory.glob("*")):
         if not local_path.is_file():
             continue
 
@@ -187,32 +183,73 @@ def upload_files(port: str | None, files_to_upload: list[tuple[Path, str]]) -> N
 
 
 # ---------------------------------------------------------------------------
+# Pico-Steuerung
+# ---------------------------------------------------------------------------
+
+
+def reboot_pico(port: str | None) -> None:
+    """
+    Reboots the Raspberry Pi Pico after deployment.
+
+    Parameters:
+        port (str | None): The serial port to communicate with the Raspberry Pi Pico.
+            If None, it will attempt to find the device automatically.
+
+    Returns:
+        None
+    """
+    print("\n[+] Starte Pico neu …", end=" ", flush=True)
+    result = run_mpremote_command(port, "reset")
+    print("✓ Neustart ausgelöst" if result.returncode == 0 else "✗ FEHLER!")
+
+
+def open_logs(port: str | None) -> None:
+    """
+    Opens the serial console of the Pico after deployment, streaming all output live.
+    Exits on Ctrl+C.
+
+    Parameters:
+        port (str | None): The serial port to communicate with the Raspberry Pi Pico.
+            If None, it will attempt to find the device automatically.
+
+    Returns:
+        None
+    """
+    print("\n[+] Öffne Konsole\n  (Strg+C zum Beenden des Prozesses auf dem Raspberry)\n  "
+          f"(Strg+X zum Beenden des Auslesens der Logs)\n\n{'-'*50}\n")
+    run_mpremote_command(port, capture=False)
+
+
+# ---------------------------------------------------------------------------
 # Upload-Logik
 # ---------------------------------------------------------------------------
 
 def upload_standard_files(port: str | None) -> None:
-    print("\n[1/1] Lade Code-Dateien hoch …")
+    print("\n[1/1] Lade Standard-Dateien hoch …")
 
     files_to_upload = []
 
     for filename in ALWAYS_UPLOAD:
         files_to_upload.append(map_path_relative(LOCAL_ROOT / filename))
 
-    for dir_name in ALWAYS_UPLOAD_DIRS:
-        files_to_upload.append(collect_relative_dir_files(LOCAL_ROOT / dir_name))
-
     upload_files(port, files_to_upload)
 
 
-def upload_optional_files(port: str | None) -> None:
-    print("\n[+] Lade optionale Dateien hoch (--force-upload) …")
+def upload_optional_files(port: str | None, dirs: list[str]) -> None:
+    print("\n[+] Lade optionale Dateien hoch (--optional-dirs) …")
 
     files_to_upload = []
 
-    for filename in OPTIONAL_UPLOAD:
-        files_to_upload.append(map_path_relative(LOCAL_ROOT / filename))
+    for dir_name in OPTIONAL_UPLOAD_DIRS:
+        if dir_name in dirs:
+            files_to_upload.extend(collect_relative_dir_files(LOCAL_ROOT / dir_name))
 
     upload_files(port, files_to_upload)
+
+def upload_settings_file(port: str | None) -> None:
+    print("\n[+] Lade settings.py hoch (--settings-upload) …")
+
+    upload_files(port, [map_path_relative(LOCAL_ROOT / SETTINGS)])
 
 
 # ---------------------------------------------------------------------------
@@ -223,8 +260,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Deployment-Skript für den Raspberry Pi Pico W")
     parser.add_argument("--port", "-p", default=None,
                         help="COM-Port des Pico (z.B. COM3). Wird auto-erkannt, wenn weggelassen.")
-    parser.add_argument("--optional-upload", "-o", action="store_true", default=False,
-                        help="settings.py immer hochladen und überschreiben, auch wenn bereits vorhanden.")
+    parser.add_argument("--settings-upload", "-s", action="store_true", default=False,
+                        help="settings.py wird mit hochladen und überschrieben.")
+    parser.add_argument("--optional-dirs", "-o", nargs="*", default=[],
+                        help="Optionale dirs, die mit hochgeladen und überschrieben werden.")
+    parser.add_argument("--reboot", "-r", action="store_true", default=False,
+                        help="Pico nach dem Deployment neu starten.")
+    parser.add_argument("--logs", "-l", action="store_true", default=False,
+                        help="Nach dem Deployment die Pico-Konsole öffnen.")
     args = parser.parse_args()
 
     check = run_command([sys.executable, "-m", "mpremote", "--version"])
@@ -232,17 +275,28 @@ def main() -> None:
         print("✗ mpremote nicht gefunden. Bitte installiere alle benötigten Pakete: pip install -r requirements.txt")
         sys.exit(1)
 
-    print(f"╔══════════════════════════════════════════╗")
-    print(f"║   Pico W Deployment – ledSign            ║")
-    print(f"╚══════════════════════════════════════════╝")
+    print("╔══════════════════════════════════════════╗")
+    print("║   Pico W Deployment – ledSign            ║")
+    print("╚══════════════════════════════════════════╝")
     print(f"  Port:         {args.port or 'auto'}")
     print(f"  Lokales Repo: {LOCAL_ROOT}")
 
     upload_standard_files(args.port)
-    if args.optional_upload:
-        upload_optional_files(args.port)
+    if args.optional_dirs:
+        upload_optional_files(args.port, args.optional_dirs)
+    if args.settings_upload:
+        upload_settings_file(args.port)
+    if args.reboot:
+        reboot_pico(args.port)
 
     print("\n✓ Deployment abgeschlossen.")
+
+    if args.logs:
+        if args.reboot:
+            print("\nWarte auf Pico …", end=" ", flush=True)
+            time.sleep(4)
+            print("✓")
+        open_logs(args.port)
 
 
 if __name__ == "__main__":
