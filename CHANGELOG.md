@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.3.0 (2026-03-13)
+
+### Features
+
+- Add wifi connection threat ([#14](https://github.com/SirDaywalker/ledSign/pull/14),
+  [`11d1a69`](https://github.com/SirDaywalker/ledSign/commit/11d1a698824050e347a44bc30cd1f7614bfaaf90))
+
+
 ## v0.2.1 (2026-03-12)
 
 ### Bug Fixes
