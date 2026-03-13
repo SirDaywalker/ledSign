@@ -4,7 +4,10 @@ version = "0.3.0"
 description = "LED Schild Projekt für Pico W"
 readme = "README.md"
 license = { file = "LICENSE" }
-dependencies = []
+dependencies = [
+    "mpremote>=1.0.0",
+    "requests>=2.28.0",
+]
 requires-python = ">=3.0"
 
 [build-system]
