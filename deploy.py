@@ -10,7 +10,7 @@ from pathlib import Path
 
 LOCAL_ROOT = Path(__file__).parent
 
-ALWAYS_UPLOAD: list[str] = [
+STANDARD_UPLOAD: list[str] = [
     "main.py",
     "boot.py",
     "pyproject.toml"
@@ -229,7 +229,7 @@ def upload_standard_files(port: str | None) -> None:
 
     files_to_upload = []
 
-    for filename in ALWAYS_UPLOAD:
+    for filename in STANDARD_UPLOAD:
         files_to_upload.append(map_path_relative(LOCAL_ROOT / filename))
 
     upload_files(port, files_to_upload)
@@ -260,8 +260,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Deployment-Skript für den Raspberry Pi Pico W")
     parser.add_argument("--port", "-p", default=None,
                         help="COM-Port des Pico (z.B. COM3). Wird auto-erkannt, wenn weggelassen.")
-    parser.add_argument("--settings-upload", "-s", action="store_true", default=False,
-                        help="settings.py wird mit hochladen und überschrieben.")
+    parser.add_argument("--settings-uploads", action="store_true", default=False,
+                        help="settings.py wird mit hochgeladen und überschrieben.")
+    parser.add_argument("--standard-upload", "-s", action="store_true", default=False,
+                        help="STANDARD-UPLOADS werden hochgeladen und überschrieben.")
     parser.add_argument("--optional-dirs", "-o", nargs="*", default=[],
                         help="Optionale dirs, die mit hochgeladen und überschrieben werden.")
     parser.add_argument("--reboot", "-r", action="store_true", default=False,
@@ -281,15 +283,17 @@ def main() -> None:
     print(f"  Port:         {args.port or 'auto'}")
     print(f"  Lokales Repo: {LOCAL_ROOT}")
 
-    upload_standard_files(args.port)
+    if args.standard_uploads:
+        upload_standard_files(args.port)
     if args.optional_dirs:
         upload_optional_files(args.port, args.optional_dirs)
     if args.settings_upload:
         upload_settings_file(args.port)
-    if args.reboot:
-        reboot_pico(args.port)
 
     print("\n✓ Deployment abgeschlossen.")
+
+    if args.reboot:
+        reboot_pico(args.port)
 
     if args.logs:
         if args.reboot:
