@@ -260,11 +260,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Deployment-Skript für den Raspberry Pi Pico W")
     parser.add_argument("--port", "-p", default=None,
                         help="COM-Port des Pico (z.B. COM3). Wird auto-erkannt, wenn weggelassen.")
-    parser.add_argument("--standard-upload", "-s", action="store_true", default=False,
+    parser.add_argument("--standard-uploads", "-s", action="store_true", default=False,
                         help="STANDARD-UPLOADS werden hochgeladen und überschrieben.")
     parser.add_argument("--optional-dirs", "-o", nargs="*", default=[],
                         help="Optionale dirs, die mit hochgeladen und überschrieben werden.")
-    parser.add_argument("--settings-uploads", action="store_true", default=False,
+    parser.add_argument("--settings-upload", action="store_true", default=False,
                         help="settings.py wird mit hochgeladen und überschrieben.")
     parser.add_argument("--reboot", "-r", action="store_true", default=False,
                         help="Pico nach dem Deployment neu starten.")
