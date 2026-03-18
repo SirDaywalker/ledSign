@@ -10,18 +10,27 @@ from pathlib import Path
 
 LOCAL_ROOT = Path(__file__).parent
 
-STANDARD_UPLOAD: list[str] = [
+FILES_TO_UPLOAD: list[str] = [
     "main.py",
     "boot.py",
-    "pyproject.toml"
+    "pyproject.toml",
+    "lib/leds.py",
+    "lib/microdot.py",
+    "lib/microdot_asyncio.py",
+    "lib/usSensor.py",
+    "lib/static/default.css",
+    "lib/static/main.js",
+    "lib/static/index.html",
+    "lib/static/favicon.ico"
 ]
 
-OPTIONAL_UPLOAD_DIRS: list[str] = [
+DIRS_TO_UPLOAD: list[str] = [
     "lib",
     "lib/static"
 ]
 
-SETTINGS: str = "settings.py"
+SETTINGS_FILE = "settings.py"
+
 
 # ---------------------------------------------------------------------------
 # Hilfsfunktionen
@@ -216,7 +225,7 @@ def open_logs(port: str | None) -> None:
         None
     """
     print("\n[+] Öffne Konsole\n  (Strg+C zum Beenden des Prozesses auf dem Raspberry)\n  "
-          f"(Strg+X zum Beenden des Auslesens der Logs)\n\n{'-'*50}\n")
+          f"(Strg+X zum Beenden des Auslesens der Logs)\n\n{'-' * 50}\n")
     run_mpremote_command(port, capture=False)
 
 
@@ -224,32 +233,21 @@ def open_logs(port: str | None) -> None:
 # Upload-Logik
 # ---------------------------------------------------------------------------
 
-def upload_standard_files(port: str | None) -> None:
-    print("\n[1/1] Lade Standard-Dateien hoch …")
+
+def upload_defined_files_from_args(port: str | None, files: list[str], dirs: list[str]) -> None:
+    print("\n[1] Lade Dateien hoch …")
 
     files_to_upload = []
 
-    for filename in STANDARD_UPLOAD:
-        files_to_upload.append(map_path_relative(LOCAL_ROOT / filename))
-
-    upload_files(port, files_to_upload)
-
-
-def upload_optional_files(port: str | None, dirs: list[str]) -> None:
-    print("\n[+] Lade optionale Dateien hoch (--optional-dirs) …")
-
-    files_to_upload = []
-
-    for dir_name in OPTIONAL_UPLOAD_DIRS:
+    for dir_name in DIRS_TO_UPLOAD:
         if dir_name in dirs:
             files_to_upload.extend(collect_relative_dir_files(LOCAL_ROOT / dir_name))
 
-    upload_files(port, files_to_upload)
+    for filename in FILES_TO_UPLOAD:
+        if filename in files:
+            files_to_upload.append(map_path_relative(LOCAL_ROOT / filename))
 
-def upload_settings_file(port: str | None) -> None:
-    print("\n[+] Lade settings.py hoch (--settings-upload) …")
-
-    upload_files(port, [map_path_relative(LOCAL_ROOT / SETTINGS)])
+    upload_files(port, list(set(files_to_upload)))
 
 
 # ---------------------------------------------------------------------------
@@ -260,12 +258,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Deployment-Skript für den Raspberry Pi Pico W")
     parser.add_argument("--port", "-p", default=None,
                         help="COM-Port des Pico (z.B. COM3). Wird auto-erkannt, wenn weggelassen.")
-    parser.add_argument("--standard-uploads", "-s", action="store_true", default=False,
-                        help="STANDARD-UPLOADS werden hochgeladen und überschrieben.")
-    parser.add_argument("--optional-dirs", "-o", nargs="*", default=[],
-                        help="Optionale dirs, die mit hochgeladen und überschrieben werden.")
-    parser.add_argument("--settings-upload", action="store_true", default=False,
-                        help="settings.py wird mit hochgeladen und überschrieben.")
+    parser.add_argument("--all", "-a", action="store_true", default=False,
+                        help="Alle Dateien/Verzeichnisse werden hochgeladen.")
+    parser.add_argument("--files", "-f", nargs="*", default=[],
+                        help="Einzelne Dateien hochladen.")
+    parser.add_argument("--dirs", "-d", nargs="*", default=[],
+                        help="Einzelne Verzeichnisse inklusive aller beinhalteten Dateien hochladen.")
+    parser.add_argument("--settings", "-s", action="store_true", default=False,
+                        help="settings.py hochladen.")
     parser.add_argument("--reboot", "-r", action="store_true", default=False,
                         help="Pico nach dem Deployment neu starten.")
     parser.add_argument("--logs", "-l", action="store_true", default=False,
@@ -283,12 +283,13 @@ def main() -> None:
     print(f"  Port:         {args.port or 'auto'}")
     print(f"  Lokales Repo: {LOCAL_ROOT}")
 
-    if args.standard_uploads:
-        upload_standard_files(args.port)
-    if args.optional_dirs:
-        upload_optional_files(args.port, args.optional_dirs)
-    if args.settings_upload:
-        upload_settings_file(args.port)
+    if args.all:
+        upload_defined_files_from_args(args.port, FILES_TO_UPLOAD, [])
+    elif args.files or args.dirs:
+        upload_defined_files_from_args(args.port, args.files, args.dirs)
+
+    if args.settings:
+        upload_files(args.port, [map_path_relative(LOCAL_ROOT / SETTINGS_FILE)])
 
     print("\n✓ Deployment abgeschlossen.")
 
