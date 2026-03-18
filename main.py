@@ -121,7 +121,7 @@ async def kill_current_task(request: Request) -> None:
     """
     Cancels the current LED task before any new command.
     """
-    if request.method == "GET":
+    if request and request.method == "GET":
         return
 
     global current_task
