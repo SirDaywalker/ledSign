@@ -14,19 +14,14 @@ LED Sign is a Raspberry Pi Pico W project that
 
 ### Wiring circuit overview (schematic)
 
-<img src="docs/wiring-circuit-led-sign.svg" alt="Schaltplan"/>
+<img src="docs/wiring-circuit-led-sign.svg" alt="Schematic wiring circuit of the LED-Sign"/>
 
 ## Quick start
 
 1. Flash MicroPython onto the Pico W.
-2. Copy these files/folders to the Pico filesystem:
-   - `boot.py`
-   - `main.py`
-   - `settings.py`
-   - `pyproject.toml`
-   - `lib/` (entire folder)
+2. Copy `settings.example.py` and rename it to`settings.py`.
 3. **Important**: Edit `settings.py` and set your Wi-Fi and pins.
-4. Reboot the Pico.
+4. Execute `py .\deploy.py -a -s -r` 
 5. Open the printed IP address in your browser: `http://<pico-ip>/`.
 
 ## How it works
