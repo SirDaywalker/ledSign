@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v0.3.1 (2026-03-18)
+
+### Bug Fixes
+
+- Add check for request variable ([#30](https://github.com/SirDaywalker/ledSign/pull/30),
+  [`d191620`](https://github.com/SirDaywalker/ledSign/commit/d19162084580f1de22760383f41a5fe919431297))
+
+### Documentation
+
+- Add wiring circuit to docs ([#28](https://github.com/SirDaywalker/ledSign/pull/28),
+  [`34d32b4`](https://github.com/SirDaywalker/ledSign/commit/34d32b4ccfef88e3b1360fb68b148ba56949b3c4))
+
+
 ## v0.3.0 (2026-03-13)
 
 ### Features
@@ -21,31 +34,9 @@
 
 ## v0.2.0 (2026-02-17)
 
-### Chores
-
-- Update step name in action workflow
-  ([`7c9552d`](https://github.com/SirDaywalker/ledSign/commit/7c9552dfffc043e51f32b99d7903eb52f4820c05))
-
 ### Features
 
 - Add version info to homepage ([#25](https://github.com/SirDaywalker/ledSign/pull/25),
-  [`2c729f7`](https://github.com/SirDaywalker/ledSign/commit/2c729f7552f987d7cdc23c572692c48348bdefc5))
-
-- Add version to homepage footer ([#25](https://github.com/SirDaywalker/ledSign/pull/25),
-  [`2c729f7`](https://github.com/SirDaywalker/ledSign/commit/2c729f7552f987d7cdc23c572692c48348bdefc5))
-
-- Add version to homepage footer option 2 ([#25](https://github.com/SirDaywalker/ledSign/pull/25),
-  [`2c729f7`](https://github.com/SirDaywalker/ledSign/commit/2c729f7552f987d7cdc23c572692c48348bdefc5))
-
-- Ensure directory creation ([#25](https://github.com/SirDaywalker/ledSign/pull/25),
-  [`2c729f7`](https://github.com/SirDaywalker/ledSign/commit/2c729f7552f987d7cdc23c572692c48348bdefc5))
-
-### Refactoring
-
-- Update logging ([#25](https://github.com/SirDaywalker/ledSign/pull/25),
-  [`2c729f7`](https://github.com/SirDaywalker/ledSign/commit/2c729f7552f987d7cdc23c572692c48348bdefc5))
-
-- Update logging and file places ([#25](https://github.com/SirDaywalker/ledSign/pull/25),
   [`2c729f7`](https://github.com/SirDaywalker/ledSign/commit/2c729f7552f987d7cdc23c572692c48348bdefc5))
 
 
