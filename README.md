@@ -14,20 +14,29 @@ LED Sign is a Raspberry Pi Pico W project that
 
 ### Wiring circuit overview (schematic)
 
-<img src="docs/wiring-circuit-led-sign.svg" alt="Schaltplan"/>
+<img src="docs/wiring-circuit-led-sign.svg" alt="Schematic wiring circuit of the LED-Sign"/>
 
 ## Quick start
 
 1. Flash MicroPython onto the Pico W.
-2. Copy these files/folders to the Pico filesystem:
-   - `boot.py`
-   - `main.py`
-   - `settings.py`
-   - `pyproject.toml`
-   - `lib/` (entire folder)
+2. Copy `settings.example.py` and rename it to`settings.py`.
 3. **Important**: Edit `settings.py` and set your Wi-Fi and pins.
-4. Reboot the Pico.
+4. Execute `py .\deploy.py -a -s -r -l` or copy the files manually to the Pico W.
 5. Open the printed IP address in your browser: `http://<pico-ip>/`.
+
+### How `deploy.py` works
+
+`deploy.py` is a helper script to copy the necessary files to the Pico W and optionally reboot and read logs. 
+
+It supports the following flags:
+
+- `-p port` to specify the serial port (e.g. `COM3`, standard: auto-detect)
+- `-a` to copy all necessary files
+- `-f filename filename2` to copy the given files
+- `-d dirname dirname2` to copy the given directories
+- `-s` to copy `settings.py`
+- `-r` to reboot the Pico W after deployment
+- `-l` to start reading the serial output (logs) after deployment
 
 ## How it works
 
