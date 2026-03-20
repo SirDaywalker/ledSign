@@ -197,7 +197,7 @@ def set_color(request: Request) -> (str, int):
 @app.put("/breath")
 async def breath(request) -> (str, int):
     """
-    Maps the "breath"-command and changes the led-stripe behaviour.
+    Maps the "breath"-command and changes the led-strip behaviour.
     :param request: the clients request
     :return: a tuple containing the html-status text and code
     """
@@ -218,7 +218,7 @@ async def breath(request) -> (str, int):
 @app.put("/cycle")
 async def cycle(request) -> (str, int):
     """
-    Maps the "cycle"-command and changes the led-stripe behaviour.
+    Maps the "cycle"-command and changes the led-strip behaviour.
     :param request: the clients request
     :return: a tuple containing the html-status text and code
     """
@@ -240,7 +240,7 @@ async def cycle(request) -> (str, int):
 @app.put("/candy-tornado")
 async def candy_tornado(request) -> (str, int):
     """
-    Maps the "CandyTornado"-command and changes the led-stripe behaviour.
+    Maps the "CandyTornado"-command and changes the led-strip behaviour.
     :param request: the clients request
     :return: a tuple containing the html-status text and code
     """
