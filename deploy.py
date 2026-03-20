@@ -235,6 +235,20 @@ def open_logs(port: str | None) -> None:
 
 
 def upload_defined_files_from_args(port: str | None, files: list[str], dirs: list[str]) -> None:
+    """
+    Uploads specified files and directories to the Raspberry Pi Pico.
+
+    If files are duplicates inside files and dirs, it will only be uploaded once.
+
+    Arguments:
+        port: The remote port as a string, where files should be uploaded. If None, the
+            default port configuration will be used.
+        files: A list of file names that should be uploaded.
+        dirs: A list of directory names from which files should be uploaded.
+
+    Returns:
+        None
+    """
     print("\n[1] Lade Dateien hoch …")
 
     files_to_upload = []
