@@ -22,9 +22,9 @@ class Leds:
 
     def __init__(self, num_leds: int, pin: int) -> None:
         """
-        Constructs a Led-Stripe-Object.
+        Constructs a Led-Strip-Object.
 
-        :param num_leds: an int with the count of the LEDs in the Stripe.
+        :param num_leds: an int with the count of the LEDs in the Strip.
         :param pin: an int which represents the Pin on the Board.
         :return: None.
         """
@@ -222,7 +222,7 @@ class Leds:
     async def candy_tornado(self, sat=255, val=255, delay_ms=10, hue_gap=36358, hue_cycle_speed=4885) -> None:
         """
         Runs an infinite tornado of candies throughout all hsv-colors.
-        The longer the stripe the better it will look.
+        The longer the strip the better it will look.
 
         :param sat: Hue of hsv.
         :param val: Value of hsv.
