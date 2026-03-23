@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v0.4.0 (2026-03-23)
+
+### Chores
+
+- Fix CHANGELOG.md ([#31](https://github.com/SirDaywalker/ledSign/pull/31),
+  [`e72d090`](https://github.com/SirDaywalker/ledSign/commit/e72d090892ba22b9a67f2848b3f01016a1a868f6))
+
+### Features
+
+- Add script for automated deployment ([#29](https://github.com/SirDaywalker/ledSign/pull/29),
+  [`7cb4a28`](https://github.com/SirDaywalker/ledSign/commit/7cb4a282fbe3bf17fd4ba2f2b1fc1b602c05c820))
+
+
 ## v0.3.1 (2026-03-18)
 
 ### Bug Fixes
