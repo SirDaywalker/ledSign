@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.4.1 (2026-03-25)
+
+### Bug Fixes
+
+- Update favicon file extension
+  ([`aee66c6`](https://github.com/SirDaywalker/ledSign/commit/aee66c68245a92dc5de4b4dbc9cb855ea352ace5))
+
+
 ## v0.4.0 (2026-03-23)
 
 ### Chores
