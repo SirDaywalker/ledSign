@@ -21,7 +21,7 @@ FILES_TO_UPLOAD: list[str] = [
     "lib/static/default.css",
     "lib/static/main.js",
     "lib/static/index.html",
-    "lib/static/favicon.ico"
+    "lib/static/favicon.png"
 ]
 
 DIRS_TO_UPLOAD: list[str] = [
