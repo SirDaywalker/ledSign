@@ -174,6 +174,16 @@ def get_js(request: Request, path: str) -> Response:
     return send_file("/lib/static/" + path)
 
 
+@app.get("/health")
+def health(request: Request) -> (str, int):
+    """
+    Checks if the server is alive.
+    :param request: the clients request
+    :return: http-code 200
+    """
+    return "Server is running", 200
+
+
 @app.put("/set-rgb-color")
 def set_color(request: Request) -> (str, int):
     """
