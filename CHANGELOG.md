@@ -2,6 +2,22 @@
 
 <!-- version list -->
 
+## v0.5.0 (2026-05-30)
+
+### Bug Fixes
+
+- Breath uses correct delay ([#34](https://github.com/SirDaywalker/ledSign/pull/34),
+  [`74dbe0f`](https://github.com/SirDaywalker/ledSign/commit/74dbe0f6b5433998f5c8698fa5ba1cb4d439c7f1))
+
+### Features
+
+- Add health check endpoint ([#33](https://github.com/SirDaywalker/ledSign/pull/33),
+  [`04a59ca`](https://github.com/SirDaywalker/ledSign/commit/04a59ca01cac252e437a7de45ac6a6f5b9eb9fc1))
+
+- Only release on main manually ([#35](https://github.com/SirDaywalker/ledSign/pull/35),
+  [`b293c91`](https://github.com/SirDaywalker/ledSign/commit/b293c914d844f35608b5f9a65a382c0b3e1b3129))
+
+
 ## v0.4.1 (2026-03-25)
 
 ### Bug Fixes
