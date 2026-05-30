@@ -10,7 +10,7 @@ on:
       - ".github/**/*"
 
 jobs:
-  check:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
