@@ -25,9 +25,9 @@ jobs:
       - name: Install Ruff
         run: pip install ruff
 
-      - name: Syntax check (py_compile)
+      - name: Check syntax
         run: |
           find . -name "*.py" -print0 | xargs -0 -n1 python -m py_compile
 
-      - name: Ruff lint check
+      - name: lint
         run: ruff check .
