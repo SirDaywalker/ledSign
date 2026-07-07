@@ -1,4 +1,4 @@
-name: Python Lint
+name: Python
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - ".github/**/*"
 
 jobs:
-  lint:
+  lint_python:
     runs-on: ubuntu-latest
 
     steps:
